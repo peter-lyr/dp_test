@@ -10,7 +10,7 @@ if not sta then return print('Dp_base is required!', debug.getinfo(1)['source'])
 --   return
 -- end
 
-vim.api.nvim_create_user_command('LazyUpdateDp', function()
+vim.api.nvim_create_user_command('DpLazyUpdate', function()
   local dp_plugins = B.get_dp_plugins()
   for _, dp in ipairs(dp_plugins) do
     vim.cmd('Lazy update ' .. dp)
@@ -20,11 +20,23 @@ end, {
   desc = 'LazyUpdateDp',
 })
 
-vim.api.nvim_create_user_command('ShowDp', function()
+vim.api.nvim_create_user_command('DpShow', function()
   local dp_plugins = B.get_dp_plugins()
   local cmd = {}
   for _, dp in ipairs(dp_plugins) do
     cmd[#cmd+1] = string.format('%s & echo. & echo %s & git branch -v & git status -s', B.system_cd(dp), dp)
+  end
+  B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
+end, {
+  nargs = 0,
+  desc = 'ShowDp',
+})
+
+vim.api.nvim_create_user_command('DpCheckOutMain', function()
+  local dp_plugins = B.get_dp_plugins()
+  local cmd = {}
+  for _, dp in ipairs(dp_plugins) do
+    cmd[#cmd+1] = string.format('%s & echo. & echo %s & git checkout main', B.system_cd(dp), dp)
   end
   B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
 end, {
