@@ -29,7 +29,7 @@ vim.api.nvim_create_user_command('ShowDp', function()
   B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
 end, {
   nargs = 0,
-  desc = 'LazyUpdateDp',
+  desc = 'ShowDp',
 })
 
 -- vim.api.nvim_create_user_command('GuiOn', function()
