@@ -1,8 +1,8 @@
 local M = {}
 
--- local sta, B = pcall(require, 'dp_base')
---
--- if not sta then return print('Dp_base is required!', debug.getinfo(1)['source']) end
+local sta, B = pcall(require, 'dp_base')
+
+if not sta then return print('Dp_base is required!', debug.getinfo(1)['source']) end
 
 -- if B.check_plugins {
 --       'git@github.com:peter-lyr/dp_init',
@@ -11,7 +11,8 @@ local M = {}
 -- end
 
 vim.api.nvim_create_user_command('LazyUpdateDp', function()
-  for _, dp in ipairs(vim.fn.getcompletion('Lazy update dp_', 'cmdline')) do
+  local dp_plugins = B.get_dp_plugins()
+  for _, dp in ipairs(dp_plugins) do
     vim.cmd('Lazy update ' .. dp)
   end
 end, {
