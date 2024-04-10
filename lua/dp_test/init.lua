@@ -20,6 +20,18 @@ end, {
   desc = 'LazyUpdateDp',
 })
 
+vim.api.nvim_create_user_command('ShowDp', function()
+  local dp_plugins = B.get_dp_plugins()
+  local cmd = {}
+  for _, dp in ipairs(dp_plugins) do
+    cmd[#cmd+1] = string.format('%s & echo. & echo %s & git branch -v', B.system_cd(dp), dp)
+  end
+  B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
+end, {
+  nargs = 0,
+  desc = 'LazyUpdateDp',
+})
+
 -- vim.api.nvim_create_user_command('GuiOn', function()
 --   vim.cmd 'GuiAdaptiveColor 1'
 --   vim.cmd 'GuiAdaptiveFont 1'
