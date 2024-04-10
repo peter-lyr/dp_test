@@ -37,7 +37,7 @@ vim.api.nvim_create_user_command('DpShow', function()
   }
 end, {
   nargs = 0,
-  desc = 'ShowDp',
+  desc = 'DpShow',
 })
 
 vim.api.nvim_create_user_command('DpPushDot', function()
@@ -48,7 +48,7 @@ vim.api.nvim_create_user_command('DpPushDot', function()
   }
 end, {
   nargs = 0,
-  desc = 'ShowDp',
+  desc = 'DpPushDot',
 })
 
 vim.api.nvim_create_user_command('DpCheckOutMain', function()
@@ -58,7 +58,7 @@ vim.api.nvim_create_user_command('DpCheckOutMain', function()
   }
 end, {
   nargs = 0,
-  desc = 'ShowDp',
+  desc = 'DpCheckOutMain',
 })
 
 -- vim.api.nvim_create_user_command('GuiOn', function()
