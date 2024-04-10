@@ -20,37 +20,42 @@ if not sta then return print('Dp_base is required!', debug.getinfo(1)['source'])
 --   desc = 'LazyUpdateDp',
 -- })
 
-vim.api.nvim_create_user_command('DpShow', function()
+function M.run_do(cmd_list)
   local dp_plugins = B.get_dp_plugins()
   local cmd = {}
   for _, dp in ipairs(dp_plugins) do
-    cmd[#cmd+1] = string.format('%s & echo. & echo %s & git branch -v & git status -s', B.system_cd(dp), dp)
+    local temp = vim.fn.join(cmd_list, ' && ')
+    cmd[#cmd + 1] = string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp)
   end
   B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
+end
+
+vim.api.nvim_create_user_command('DpShow', function()
+  M.run_do {
+    'git branch -v',
+    'git status -s',
+  }
 end, {
   nargs = 0,
   desc = 'ShowDp',
 })
 
 vim.api.nvim_create_user_command('DpPushDot', function()
-  local dp_plugins = B.get_dp_plugins()
-  local cmd = {}
-  for _, dp in ipairs(dp_plugins) do
-    cmd[#cmd+1] = string.format('%s & git add . && git commit -m "." && git push', B.system_cd(dp))
-  end
-  B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
+  M.run_do {
+    -- 'git add .',
+    -- 'git commit -m "."',
+    'git push',
+  }
 end, {
   nargs = 0,
   desc = 'ShowDp',
 })
 
 vim.api.nvim_create_user_command('DpCheckOutMain', function()
-  local dp_plugins = B.get_dp_plugins()
-  local cmd = {}
-  for _, dp in ipairs(dp_plugins) do
-    cmd[#cmd+1] = string.format('%s & echo. & echo %s & git checkout main && git pull', B.system_cd(dp), dp)
-  end
-  B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
+  M.run_do {
+    'git checkout main',
+    'git pull',
+  }
 end, {
   nargs = 0,
   desc = 'ShowDp',
@@ -76,39 +81,37 @@ end, {
 -- })
 
 function M.test()
-
---   240410-00h15m
---   vim.g.temp_start = 0
---   vim.on_key(function(c)
---     vim.g.c = c
---     vim.cmd [[
---       python << EOF
--- import vim
--- import time
--- with open(r'C:\w.txt', 'ab') as f:
---   temp_end = time.time()
---   temp_start = float(vim.eval('g:temp_start'))
---   f.write(str(temp_end-temp_start).encode('utf-8') + b'\n')
---   vim.command(f'let g:temp_start = {temp_end}')
---   c = vim.eval('g:c')
---   for i in c:
---     f.write((hex(ord(i)) + '|').encode('utf-8'))
---   f.write(b'\n')
---   for i in c:
---     t = ord(i)
---     r = chr(t & 0xff)
---     f.write(r.encode('utf-8'))
---     t >>= 8
---     while t > 0x100:
---       f.write(r.encode('utf-8'))
---       r = chr(t & 0xff) + r
---       t >>= 8
---     f.write(b'|')
---   f.write(b'\n\n')
--- EOF
--- ]]
---   end)
-
+  --   240410-00h15m
+  --   vim.g.temp_start = 0
+  --   vim.on_key(function(c)
+  --     vim.g.c = c
+  --     vim.cmd [[
+  --       python << EOF
+  -- import vim
+  -- import time
+  -- with open(r'C:\w.txt', 'ab') as f:
+  --   temp_end = time.time()
+  --   temp_start = float(vim.eval('g:temp_start'))
+  --   f.write(str(temp_end-temp_start).encode('utf-8') + b'\n')
+  --   vim.command(f'let g:temp_start = {temp_end}')
+  --   c = vim.eval('g:c')
+  --   for i in c:
+  --     f.write((hex(ord(i)) + '|').encode('utf-8'))
+  --   f.write(b'\n')
+  --   for i in c:
+  --     t = ord(i)
+  --     r = chr(t & 0xff)
+  --     f.write(r.encode('utf-8'))
+  --     t >>= 8
+  --     while t > 0x100:
+  --       f.write(r.encode('utf-8'))
+  --       r = chr(t & 0xff) + r
+  --       t >>= 8
+  --     f.write(b'|')
+  --   f.write(b'\n\n')
+  -- EOF
+  -- ]]
+  --   end)
 end
 
 return M
