@@ -36,7 +36,7 @@ vim.api.nvim_create_user_command('DpPushDot', function()
   local dp_plugins = B.get_dp_plugins()
   local cmd = {}
   for _, dp in ipairs(dp_plugins) do
-    cmd[#cmd+1] = string.format('%s & git add . && git commit -m "." & git push', B.system_cd(dp))
+    cmd[#cmd+1] = string.format('%s & git add . && git commit -m "." && git push', B.system_cd(dp))
   end
   B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
 end, {
