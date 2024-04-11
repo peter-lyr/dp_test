@@ -20,54 +20,56 @@ if not sta then return print('Dp_base is required!', debug.getinfo(1)['source'])
 --   desc = 'LazyUpdateDp',
 -- })
 
-function M.run_one_do(cmd_list)
-  local dp_plugins = B.get_dp_plugins()
-  local cmd = {}
-  for _, dp in ipairs(dp_plugins) do
-    local temp = vim.fn.join(cmd_list, ' && ')
-    cmd[#cmd + 1] = string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp)
+function M.dp_plugins()
+  function M.run_one_do(cmd_list)
+    local dp_plugins = B.get_dp_plugins()
+    local cmd = {}
+    for _, dp in ipairs(dp_plugins) do
+      local temp = vim.fn.join(cmd_list, ' && ')
+      cmd[#cmd + 1] = string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp)
+    end
+    B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & echo. & pause')
   end
-  B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & echo. & pause')
-end
 
-function M.run_multi_do(cmd_list)
-  local dp_plugins = B.get_dp_plugins()
-  for _, dp in ipairs(dp_plugins) do
-    local temp = vim.fn.join(cmd_list, ' && ')
-    B.system_run('start', string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp))
+  function M.run_multi_do(cmd_list)
+    local dp_plugins = B.get_dp_plugins()
+    for _, dp in ipairs(dp_plugins) do
+      local temp = vim.fn.join(cmd_list, ' && ')
+      B.system_run('start', string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp))
+    end
   end
+
+  vim.api.nvim_create_user_command('DpBranchStatus', function()
+    M.run_one_do {
+      'git branch -v',
+      'git status -s',
+    }
+  end, {
+    nargs = 0,
+    desc = 'DpShow',
+  })
+
+  vim.api.nvim_create_user_command('DpAddCommitPushDot', function()
+    M.run_multi_do {
+      'git add .',
+      'git commit -m "."',
+      'git push',
+    }
+  end, {
+    nargs = 0,
+    desc = 'DpPushDot',
+  })
+
+  vim.api.nvim_create_user_command('DpCheckOutMainPull', function()
+    M.run_multi_do {
+      'git checkout main',
+      'git pull',
+    }
+  end, {
+    nargs = 0,
+    desc = 'DpCheckOutMainPull',
+  })
 end
-
-vim.api.nvim_create_user_command('DpBranchStatus', function()
-  M.run_one_do {
-    'git branch -v',
-    'git status -s',
-  }
-end, {
-  nargs = 0,
-  desc = 'DpShow',
-})
-
-vim.api.nvim_create_user_command('DpAddCommitPushDot', function()
-  M.run_multi_do {
-    'git add .',
-    'git commit -m "."',
-    'git push',
-  }
-end, {
-  nargs = 0,
-  desc = 'DpPushDot',
-})
-
-vim.api.nvim_create_user_command('DpCheckOutMainPull', function()
-  M.run_multi_do {
-    'git checkout main',
-    'git pull',
-  }
-end, {
-  nargs = 0,
-  desc = 'DpCheckOutMainPull',
-})
 
 -- vim.api.nvim_create_user_command('GuiOn', function()
 --   vim.cmd 'GuiAdaptiveColor 1'
@@ -121,5 +123,7 @@ function M.test()
   -- ]]
   --   end)
 end
+
+M.dp_plugins()
 
 return M
