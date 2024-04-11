@@ -30,8 +30,16 @@ function M.run_do(cmd_list)
   B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
 end
 
+function M.run_multi_do(cmd_list)
+  local dp_plugins = B.get_dp_plugins()
+  for _, dp in ipairs(dp_plugins) do
+    local temp = vim.fn.join(cmd_list, ' && ')
+    B.system_run('start', string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp))
+  end
+end
+
 vim.api.nvim_create_user_command('DpShow', function()
-  M.run_do {
+  M.run_one_do {
     'git branch -v',
     'git status -s',
   }
@@ -41,9 +49,9 @@ end, {
 })
 
 vim.api.nvim_create_user_command('DpPushDot', function()
-  M.run_do {
-    -- 'git add .',
-    -- 'git commit -m "."',
+  M.run_multi_do {
+    'git add .',
+    'git commit -m "."',
     'git push',
   }
 end, {
@@ -52,7 +60,7 @@ end, {
 })
 
 vim.api.nvim_create_user_command('DpCheckOutMain', function()
-  M.run_do {
+  M.run_multi_do {
     'git checkout main',
     'git pull',
   }
