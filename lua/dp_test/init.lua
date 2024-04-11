@@ -20,7 +20,7 @@ if not sta then return print('Dp_base is required!', debug.getinfo(1)['source'])
 --   desc = 'LazyUpdateDp',
 -- })
 
-function M.run_do(cmd_list)
+function M.run_one_do(cmd_list)
   local dp_plugins = B.get_dp_plugins()
   local cmd = {}
   for _, dp in ipairs(dp_plugins) do
