@@ -27,7 +27,7 @@ function M.run_one_do(cmd_list)
     local temp = vim.fn.join(cmd_list, ' && ')
     cmd[#cmd + 1] = string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp)
   end
-  B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & pause')
+  B.system_run('start', vim.fn.join(cmd, ' & ') .. ' & echo. & pause')
 end
 
 function M.run_multi_do(cmd_list)
