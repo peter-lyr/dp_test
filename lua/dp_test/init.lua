@@ -59,14 +59,14 @@ end, {
   desc = 'DpPushDot',
 })
 
-vim.api.nvim_create_user_command('DpCheckOutMain', function()
+vim.api.nvim_create_user_command('DpCheckOutMainPull', function()
   M.run_multi_do {
     'git checkout main',
     'git pull',
   }
 end, {
   nargs = 0,
-  desc = 'DpCheckOutMain',
+  desc = 'DpCheckOutMainPull',
 })
 
 -- vim.api.nvim_create_user_command('GuiOn', function()
