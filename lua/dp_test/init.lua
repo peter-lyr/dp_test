@@ -38,7 +38,7 @@ function M.run_multi_do(cmd_list)
   end
 end
 
-vim.api.nvim_create_user_command('DpShow', function()
+vim.api.nvim_create_user_command('DpBranchStatus', function()
   M.run_one_do {
     'git branch -v',
     'git status -s',
@@ -48,7 +48,7 @@ end, {
   desc = 'DpShow',
 })
 
-vim.api.nvim_create_user_command('DpPushDot', function()
+vim.api.nvim_create_user_command('DpAddCommitPushDot', function()
   M.run_multi_do {
     'git add .',
     'git commit -m "."',
