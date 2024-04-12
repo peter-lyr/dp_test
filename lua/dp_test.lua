@@ -52,7 +52,7 @@ function M.dp_plugins()
   vim.api.nvim_create_user_command('DpAddCommitPushDot', function()
     M.run_multi_do {
       'git add .',
-      'git commit -m "no M.setup()"',
+      string.format('git commit -m "%s"', vim.fn.input('commit info: ', '.')),
       'git push',
     }
   end, {
