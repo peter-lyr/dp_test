@@ -4,11 +4,11 @@ local sta, B = pcall(require, 'dp_base')
 
 if not sta then return print('Dp_base is required!', debug.getinfo(1)['source']) end
 
--- if B.check_plugins {
---       'git@github.com:peter-lyr/dp_init',
---     } then
---   return
--- end
+if B.check_plugins {
+      'git@github.com:peter-lyr/dp_lsp',
+    } then
+  return
+end
 
 -- vim.api.nvim_create_user_command('DpLazyUpdate', function()
 --   local dp_plugins = B.get_dp_plugins()
@@ -176,7 +176,7 @@ function M.map()
     require 'plenary.path':new(fname):write(vim.fn.join(new_lines, '\r\n'), 'w')
     B.set_timeout(10, function()
       vim.cmd 'e!'
-      -- require 'cfg.nvim.lsp'.format()
+      require 'dp_lsp'.format()
     end)
   end
 
@@ -226,7 +226,7 @@ function M.map()
     require 'plenary.path':new(fname):write(vim.fn.join(new_lines, '\r\n'), 'w')
     B.set_timeout(10, function()
       vim.cmd 'e!'
-      -- require 'cfg.nvim.lsp'.format()
+      require 'dp_lsp'.format()
     end)
   end
 end
