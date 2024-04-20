@@ -169,7 +169,7 @@ function M.map()
     require 'plenary.path':new(fname):write(vim.fn.join(new_lines, '\r\n'), 'w')
     B.set_timeout(10, function()
       vim.cmd 'e!'
-      require 'cfg.nvim.lsp'.format()
+      -- require 'cfg.nvim.lsp'.format()
     end)
   end
 
@@ -212,7 +212,7 @@ function M.map()
     require 'plenary.path':new(fname):write(vim.fn.join(new_lines, '\r\n'), 'w')
     B.set_timeout(10, function()
       vim.cmd 'e!'
-      require 'cfg.nvim.lsp'.format()
+      -- require 'cfg.nvim.lsp'.format()
     end)
   end
 end
