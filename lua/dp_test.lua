@@ -10,16 +10,6 @@ if B.check_plugins {
   return
 end
 
--- vim.api.nvim_create_user_command('DpLazyUpdate', function()
---   local dp_plugins = B.get_dp_plugins()
---   for _, dp in ipairs(dp_plugins) do
---     vim.cmd('Lazy update ' .. dp)
---   end
--- end, {
---   nargs = 0,
---   desc = 'LazyUpdateDp',
--- })
-
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -70,25 +60,6 @@ function M.dp_plugins()
     desc = 'DpCheckOutMainPull',
   })
 end
-
--- vim.api.nvim_create_user_command('GuiOn', function()
---   vim.cmd 'GuiAdaptiveColor 1'
---   vim.cmd 'GuiAdaptiveFont 1'
---   vim.cmd 'GuiAdaptiveStyle Fusion'
---   vim.cmd 'GuiTreeviewShow'
--- end, {
---   nargs = 0,
---   desc = 'GuiOn',
--- })
---
--- vim.api.nvim_create_user_command('GuiOff', function()
---   vim.cmd 'GuiAdaptiveColor 0'
---   vim.cmd 'GuiAdaptiveFont 0'
---   vim.cmd 'GuiTreeviewHide'
--- end, {
---   nargs = 0,
---   desc = 'GuiOff',
--- })
 
 function M.test()
   --   240410-00h15m
