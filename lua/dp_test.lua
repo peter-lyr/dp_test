@@ -142,7 +142,14 @@ function M.map()
         res = string.match(line, '^ +({.*name *= *.*}) *,')
       end
       if res then
-        local item = loadstring('return ' .. res)
+        local temp = string.format([[
+          local sta, B = pcall(require, 'dp_base')
+          if not sta then return nil end
+          local M = {}
+          M.lua = B.getlua(vim.api.nvim_buf_get_name(0))
+          return %s
+        ]], res)
+        local item = loadstring(temp)
         if item then
           local val = item()
           if type(val[2]) == 'function' then
@@ -153,7 +160,7 @@ function M.map()
             val[#val + 1] = val['desc']
             val['desc'] = nil
           end
-          local temp = string.gsub(vim.inspect { [lhs] = val, }, '%s+', ' ')
+          temp = string.gsub(vim.inspect { [lhs] = val, }, '%s+', ' ')
           temp = string.gsub(temp, '"(function().+end)",', '%1,')
           temp = string.gsub(temp, '\\"', '"')
           temp = string.gsub(temp, '{(.+)}', '%1')
@@ -187,7 +194,14 @@ function M.map()
     for _, line in ipairs(vim.fn.readfile(fname)) do
       local res = string.match(line, '^.+ *=.*{.*mode *=.+} *,')
       if res then
-        local item = loadstring('return {' .. res .. '}')
+        local temp = string.format([[
+          local sta, B = pcall(require, 'dp_base')
+          if not sta then return nil end
+          local M = {}
+          M.lua = B.getlua(vim.api.nvim_buf_get_name(0))
+          return {%s}
+        ]], res)
+        local item = loadstring(temp)
         if item then
           local val = item()
           for lhs, d in pairs(val) do
@@ -196,7 +210,7 @@ function M.map()
             end
             table.insert(d, 1, lhs)
             d['desc'] = table.remove(d, 3)
-            local temp = string.gsub(vim.inspect(d), '%s+', ' ')
+            temp = string.gsub(vim.inspect(d), '%s+', ' ')
             temp = string.gsub(temp, '"(function().+end)",', '%1,')
             temp = string.gsub(temp, '\\"', '"')
             temp = vim.fn.trim(temp) .. ','
