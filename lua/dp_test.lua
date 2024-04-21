@@ -10,6 +10,10 @@ if B.check_plugins {
   return
 end
 
+M.tbl = {}
+M.flag = nil
+M.show_on_key = 1
+
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -61,41 +65,41 @@ function M.dp_plugins()
   })
 end
 
-function M.test()
-  --   240410-00h15m
-  --   vim.g.temp_start = 0
-  --   vim.on_key(function(c)
-  --     vim.g.c = c
-  --     vim.cmd [[
-  --       python << EOF
-  -- import vim
-  -- import time
-  -- with open(r'C:\w.txt', 'ab') as f:
-  --   temp_end = time.time()
-  --   temp_start = float(vim.eval('g:temp_start'))
-  --   f.write(str(temp_end-temp_start).encode('utf-8') + b'\n')
-  --   vim.command(f'let g:temp_start = {temp_end}')
-  --   c = vim.eval('g:c')
-  --   for i in c:
-  --     f.write((hex(ord(i)) + '|').encode('utf-8'))
-  --   f.write(b'\n')
-  --   for i in c:
-  --     t = ord(i)
-  --     r = chr(t & 0xff)
-  --     f.write(r.encode('utf-8'))
-  --     t >>= 8
-  --     while t > 0x100:
-  --       f.write(r.encode('utf-8'))
-  --       r = chr(t & 0xff) + r
-  --       t >>= 8
-  --     f.write(b'|')
-  --   f.write(b'\n\n')
-  -- EOF
-  -- ]]
-  --   end)
-end
-
 function M.map()
+  function M.test()
+    --   240410-00h15m
+    --   vim.g.temp_start = 0
+    --   vim.on_key(function(c)
+    --     vim.g.c = c
+    --     vim.cmd [[
+    --       python << EOF
+    -- import vim
+    -- import time
+    -- with open(r'C:\w.txt', 'ab') as f:
+    --   temp_end = time.time()
+    --   temp_start = float(vim.eval('g:temp_start'))
+    --   f.write(str(temp_end-temp_start).encode('utf-8') + b'\n')
+    --   vim.command(f'let g:temp_start = {temp_end}')
+    --   c = vim.eval('g:c')
+    --   for i in c:
+    --     f.write((hex(ord(i)) + '|').encode('utf-8'))
+    --   f.write(b'\n')
+    --   for i in c:
+    --     t = ord(i)
+    --     r = chr(t & 0xff)
+    --     f.write(r.encode('utf-8'))
+    --     t >>= 8
+    --     while t > 0x100:
+    --       f.write(r.encode('utf-8'))
+    --       r = chr(t & 0xff) + r
+    --       t >>= 8
+    --     f.write(b'|')
+    --   f.write(b'\n\n')
+    -- EOF
+    -- ]]
+    --   end)
+  end
+
   vim.api.nvim_create_user_command('MapFromLazyToWhichkey', function(params)
     M.map_from_lazy_to_whichkey(unpack(params['fargs']))
   end, { nargs = 0, })
@@ -202,51 +206,144 @@ function M.map()
   end
 end
 
-M.dp_plugins()
-M.map()
+function M.charstr()
+  function M.getcharstr(charstr)
+    if not charstr then
+      charstr = vim.fn.getcharstr()
+    end
+    local temp = {}
+    for i in string.gmatch(charstr, '.') do
+      temp[#temp + 1] = string.byte(i, 1)
+    end
+    return temp
+  end
 
-function M.getcharstr(charstr)
-  if not charstr then
-    charstr = vim.fn.getcharstr()
+  function M.getkeyhex()
+    local charstr = vim.fn.getcharstr()
+    print(charstr, M.getcharstr(charstr))
   end
-  local c1 = string.byte(charstr, 1)
-  local c2 = string.byte(charstr, 2)
-  local c3 = string.byte(charstr, 3)
-  local c4 = string.byte(charstr, 4)
-  local hex = c1
-  if c2 then
-    hex = hex + c2 * 0x100
-  end
-  if c3 then
-    hex = hex + c3 * 0x10000
-  end
-  if c4 then
-    hex = hex + c4 * 0x1000000
-  end
-  return hex
+
+  vim.api.nvim_create_user_command('GetKeyHex', function()
+    M.getkeyhex()
+  end, {
+    nargs = 0,
+    desc = 'GetKeyHex',
+  })
 end
 
-function M.getkeyhex()
-  local charstr = vim.fn.getcharstr()
-  local hex = M.getcharstr(charstr)
-  print(string.format('%s: 0x%08x', charstr, hex))
-end
-
-vim.api.nvim_create_user_command('GetKeyHex', function()
-  M.getkeyhex()
-end, {
-  nargs = 0,
-  desc = 'GetKeyHex',
-})
-
-function M.test3()
-  M.timer1 = B.set_interval(32, function()
-    local hex = M.getcharstr()
-    print(string.format('0x%08x', hex))
-    if hex == 0x1b then
-      B.clear_interval(M.timer1)
+function M.on_key()
+  vim.on_key(function(c)
+    if M.flag then
+      return
+    end
+    local temp = {}
+    for i in string.gmatch(c, '.') do
+      temp[#temp + 1] = string.byte(i, 1)
+    end
+    if M.show_on_key then
+      B.notify_info_append(c .. '|' .. vim.inspect(temp))
+    end
+    for _, val in pairs(M.tbl) do
+      print(vim.inspect(temp), vim.inspect(val[1]))
+      if B.is_tbl_equal(temp, val[1]) then
+        M.flag = 1
+        val[2]()
+        B.set_timeout(100, function()
+          M.flag = nil
+        end)
+        return
+      end
+    end
+    if B.is_tbl_equal(temp, { 128, 253, 103, }) then
+      M.tbl = {}
     end
   end)
+
+  function M.register(tbl)
+    M.tbl = vim.deepcopy(tbl)
+  end
+
+  function M.h()
+    vim.cmd [[call feedkeys("\<c-h>")]]
+  end
+
+  function M.l()
+    vim.cmd [[call feedkeys("\<c-l>")]]
+  end
+
+  function M.tt()
+    M.register {
+      ['l'] = { { 108, }, function() M.l() end, },
+      ['h'] = { { 104, }, function() M.h() end, },
+    }
+  end
+
+  B.lazy_map {
+    { '<c-f12>',   function() M.show_on_key = 1 end,   mode = { 'n', 'v', }, silent = true, desc = 'test', },
+    { '<c-s-f12>', function() M.show_on_key = nil end, mode = { 'n', 'v', }, silent = true, desc = 'test', },
+    { '<c-f11>',   function() M.tt() end,              mode = { 'n', 'v', }, silent = true, desc = 'test', },
+    { '<c-s-f11>', function() M.tbl = {} end,          mode = { 'n', 'v', }, silent = true, desc = 'test', },
+  }
 end
+
+function M.on_map()
+  vim.on_key(function(c)
+    if #vim.tbl_keys(M.tbl) == 0 then
+      return
+    end
+    local temp = {}
+    for i in string.gmatch(c, '.') do
+      temp[#temp + 1] = string.byte(i, 1)
+    end
+    if #temp > 1 then
+      return
+    end
+    for hex, _ in pairs(M.tbl) do
+      if B.is_tbl_equal(temp, hex) then
+        return
+      end
+    end
+    for _, val in pairs(M.tbl) do
+      local mode = val['mode']
+      local lhs = val[1]
+      B.set_timeout(100, function()
+        B.del_map(mode, lhs)
+      end)
+    end
+    M.tbl = {}
+  end)
+
+  function M.register(tbl)
+    M.tbl = vim.deepcopy(tbl)
+    for _, map in pairs(tbl) do
+      B.lazy_map { map, }
+    end
+  end
+
+  function M.h()
+    require 'dp_tabline'.b_prev_buf()
+  end
+
+  function M.l()
+    require 'dp_tabline'.b_next_buf()
+  end
+
+  function M.tt()
+    M.register {
+      [{ 108, }] = { 'l', function() M.l() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
+      [{ 104, }] = { 'h', function() M.h() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
+    }
+  end
+
+  B.lazy_map {
+    { '<c-f11>', function() M.tt() end, mode = { 'n', 'v', }, silent = true, desc = 'test', },
+  }
+end
+
+M.dp_plugins()
+M.map()
+M.charstr()
+-- M.on_key()
+M.on_map()
 
 return M
