@@ -205,12 +205,11 @@ end
 M.dp_plugins()
 M.map()
 
-function M.getcharstr()
-  local ch = vim.fn.getcharstr()
-  local c1 = string.byte(ch, 1)
-  local c2 = string.byte(ch, 2)
-  local c3 = string.byte(ch, 3)
-  local c4 = string.byte(ch, 4)
+function M.getcharstr(charstr)
+  local c1 = string.byte(charstr, 1)
+  local c2 = string.byte(charstr, 2)
+  local c3 = string.byte(charstr, 3)
+  local c4 = string.byte(charstr, 4)
   local hex = c1
   if c2 then
     hex = hex + c2 * 0x100
@@ -224,12 +223,27 @@ function M.getcharstr()
   return hex
 end
 
-function M.test2()
-  local hex = M.getcharstr()
-  print(string.format('0x%08x', hex))
+function M.getkeyhex()
+  local charstr = vim.fn.getcharstr()
+  local hex = M.getcharstr(charstr)
+  print(string.format('%s: 0x%08x', charstr, hex))
 end
 
--- B.lazy_map { { '<cr>', function() M.test2() end, mode = { 'n', 'v', }, silent = true, desc = 'test2', }, }
-B.del_map { { { 'n', 'v', }, '<cr>', }, }
+vim.api.nvim_create_user_command('GetKeyHex', function()
+  M.getkeyhex()
+end, {
+  nargs = 0,
+  desc = 'GetKeyHex',
+})
+
+function M.test3()
+  M.timer1 = B.set_interval(32, function()
+    local hex = M.getcharstr()
+    print(string.format('0x%08x', hex))
+    if hex == 0x1b then
+      B.clear_interval(M.timer1)
+    end
+  end)
+end
 
 return M
