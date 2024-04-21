@@ -205,4 +205,31 @@ end
 M.dp_plugins()
 M.map()
 
+function M.getcharstr()
+  local ch = vim.fn.getcharstr()
+  local c1 = string.byte(ch, 1)
+  local c2 = string.byte(ch, 2)
+  local c3 = string.byte(ch, 3)
+  local c4 = string.byte(ch, 4)
+  local hex = c1
+  if c2 then
+    hex = hex + c2 * 0x100
+  end
+  if c3 then
+    hex = hex + c3 * 0x10000
+  end
+  if c4 then
+    hex = hex + c4 * 0x1000000
+  end
+  return hex
+end
+
+function M.test2()
+  local hex = M.getcharstr()
+  print(string.format('0x%08x', hex))
+end
+
+-- B.lazy_map { { '<cr>', function() M.test2() end, mode = { 'n', 'v', }, silent = true, desc = 'test2', }, }
+B.del_map { { { 'n', 'v', }, '<cr>', }, }
+
 return M
