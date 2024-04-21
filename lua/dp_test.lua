@@ -10,10 +10,6 @@ if B.check_plugins {
   return
 end
 
-M.tbl = {}
-M.flag = nil
-M.show_on_key = 1
-
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -206,144 +202,33 @@ function M.map()
   end
 end
 
-function M.charstr()
-  function M.getcharstr(charstr)
-    if not charstr then
-      charstr = vim.fn.getcharstr()
-    end
-    local temp = {}
-    for i in string.gmatch(charstr, '.') do
-      temp[#temp + 1] = string.byte(i, 1)
-    end
-    return temp
-  end
-
-  function M.getkeyhex()
-    local charstr = vim.fn.getcharstr()
-    print(charstr, M.getcharstr(charstr))
-  end
-
-  vim.api.nvim_create_user_command('GetKeyHex', function()
-    M.getkeyhex()
-  end, {
-    nargs = 0,
-    desc = 'GetKeyHex',
-  })
-end
-
-function M.on_key()
-  vim.on_key(function(c)
-    if M.flag then
-      return
-    end
-    local temp = {}
-    for i in string.gmatch(c, '.') do
-      temp[#temp + 1] = string.byte(i, 1)
-    end
-    if M.show_on_key then
-      B.notify_info_append(c .. '|' .. vim.inspect(temp))
-    end
-    for _, val in pairs(M.tbl) do
-      print(vim.inspect(temp), vim.inspect(val[1]))
-      if B.is_tbl_equal(temp, val[1]) then
-        M.flag = 1
-        val[2]()
-        B.set_timeout(100, function()
-          M.flag = nil
-        end)
-        return
-      end
-    end
-    if B.is_tbl_equal(temp, { 128, 253, 103, }) then
-      M.tbl = {}
-    end
-  end)
-
-  function M.register(tbl)
-    M.tbl = vim.deepcopy(tbl)
-  end
-
-  function M.h()
-    vim.cmd [[call feedkeys("\<c-h>")]]
-  end
-
-  function M.l()
-    vim.cmd [[call feedkeys("\<c-l>")]]
-  end
-
-  function M.tt()
-    M.register {
-      ['l'] = { { 108, }, function() M.l() end, },
-      ['h'] = { { 104, }, function() M.h() end, },
-    }
-  end
-
-  B.lazy_map {
-    { '<c-f12>',   function() M.show_on_key = 1 end,   mode = { 'n', 'v', }, silent = true, desc = 'test', },
-    { '<c-s-f12>', function() M.show_on_key = nil end, mode = { 'n', 'v', }, silent = true, desc = 'test', },
-    { '<c-f11>',   function() M.tt() end,              mode = { 'n', 'v', }, silent = true, desc = 'test', },
-    { '<c-s-f11>', function() M.tbl = {} end,          mode = { 'n', 'v', }, silent = true, desc = 'test', },
-  }
-end
-
-function M.on_map()
-  vim.on_key(function(c)
-    if #vim.tbl_keys(M.tbl) == 0 then
-      return
-    end
-    local temp = {}
-    for i in string.gmatch(c, '.') do
-      temp[#temp + 1] = string.byte(i, 1)
-    end
-    if #temp > 1 then
-      return
-    end
-    for hex, _ in pairs(M.tbl) do
-      if B.is_tbl_equal(temp, hex) then
-        return
-      end
-    end
-    for _, val in pairs(M.tbl) do
-      local mode = val['mode']
-      local lhs = val[1]
-      B.set_timeout(100, function()
-        B.del_map(mode, lhs)
-      end)
-    end
-    M.tbl = {}
-  end)
-
-  function M.register(tbl)
-    M.tbl = vim.deepcopy(tbl)
-    for _, map in pairs(tbl) do
-      B.lazy_map { map, }
-    end
-  end
-
-  function M.h()
-    require 'dp_tabline'.b_prev_buf()
-  end
-
-  function M.l()
-    require 'dp_tabline'.b_next_buf()
-  end
-
-  function M.tt()
-    M.register {
-      [{ 108, }] = { 'l', function() M.l() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
-      [{ 104, }] = { 'h', function() M.h() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
-    }
-  end
-
-  B.lazy_map {
-    { '<c-f11>', function() M.tt() end, mode = { 'n', 'v', }, silent = true, desc = 'test', },
-  }
-end
+-- function M.charstr()
+--   function M.getcharstr(charstr)
+--     if not charstr then
+--       charstr = vim.fn.getcharstr()
+--     end
+--     local temp = {}
+--     for i in string.gmatch(charstr, '.') do
+--       temp[#temp + 1] = string.byte(i, 1)
+--     end
+--     return temp
+--   end
+--
+--   function M.getkeyhex()
+--     local charstr = vim.fn.getcharstr()
+--     print(charstr, M.getcharstr(charstr))
+--   end
+--
+--   vim.api.nvim_create_user_command('GetKeyHex', function()
+--     M.getkeyhex()
+--   end, {
+--     nargs = 0,
+--     desc = 'GetKeyHex',
+--   })
+-- end
 
 M.dp_plugins()
 M.map()
-M.charstr()
--- M.on_key()
-M.on_map()
+-- M.charstr()
 
 return M
