@@ -206,6 +206,9 @@ M.dp_plugins()
 M.map()
 
 function M.getcharstr(charstr)
+  if not charstr then
+    charstr = vim.fn.getcharstr()
+  end
   local c1 = string.byte(charstr, 1)
   local c2 = string.byte(charstr, 2)
   local c3 = string.byte(charstr, 3)
