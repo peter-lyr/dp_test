@@ -228,7 +228,7 @@ end
 -- end
 
 M.dp_plugins()
-M.map()
+-- M.map()
 -- M.charstr()
 
 return M
