@@ -62,40 +62,6 @@ function M.dp_plugins()
 end
 
 function M.map()
-  function M.test()
-    --   240410-00h15m
-    --   vim.g.temp_start = 0
-    --   vim.on_key(function(c)
-    --     vim.g.c = c
-    --     vim.cmd [[
-    --       python << EOF
-    -- import vim
-    -- import time
-    -- with open(r'C:\w.txt', 'ab') as f:
-    --   temp_end = time.time()
-    --   temp_start = float(vim.eval('g:temp_start'))
-    --   f.write(str(temp_end-temp_start).encode('utf-8') + b'\n')
-    --   vim.command(f'let g:temp_start = {temp_end}')
-    --   c = vim.eval('g:c')
-    --   for i in c:
-    --     f.write((hex(ord(i)) + '|').encode('utf-8'))
-    --   f.write(b'\n')
-    --   for i in c:
-    --     t = ord(i)
-    --     r = chr(t & 0xff)
-    --     f.write(r.encode('utf-8'))
-    --     t >>= 8
-    --     while t > 0x100:
-    --       f.write(r.encode('utf-8'))
-    --       r = chr(t & 0xff) + r
-    --       t >>= 8
-    --     f.write(b'|')
-    --   f.write(b'\n\n')
-    -- EOF
-    -- ]]
-    --   end)
-  end
-
   vim.api.nvim_create_user_command('MapFromLazyToWhichkey', function(params)
     M.map_from_lazy_to_whichkey(unpack(params['fargs']))
   end, { nargs = 0, })
