@@ -5,12 +5,18 @@ local sta, B = pcall(require, 'dp_base')
 if not sta then return print('Dp_base is required!', debug.getinfo(1)['source']) end
 
 if B.check_plugins {
+      'folke/which-key.nvim',
       'git@github.com:peter-lyr/dp_lsp',
     } then
   return
 end
 
 M.source_fts = { 'lua', 'vim', }
+
+-- M.restart_flag = B.read_table_from_file(RestartFlagTxt)
+-- print("vim.inspect(M.restart_flag):", vim.inspect(M.restart_flag))
+
+-- B.write_table_to_file(RestartFlagTxt, M.restart_flag)
 
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
@@ -164,9 +170,39 @@ function M.test1()
   end
 end
 
+function M.nvim_qt()
+  function M.start_nvim_qt()
+    pcall(vim.cmd, 'SessionsSave')
+    pcall(vim.cmd, 'wshada!')
+    local rtp = vim.fn.expand(string.match(vim.fn.execute 'set rtp', ',([^,]+)\\share\\nvim\\runtime'))
+    vim.fn.writefile({
+      string.format('cd %s\\bin', rtp),
+      string.format('start /d %s nvim-qt.exe', vim.loop.cwd()),
+    }, RestartNvimQtBat)
+    vim.cmd(string.format([[silent !start cmd /c "%s"]], RestartNvimQtBat))
+  end
+
+  function M.quit_nvim_qt()
+    vim.cmd 'qa'
+  end
+
+  function M.restart_nvim_qt_sessionload()
+    pcall(vim.fn.writefile, { 1, }, RestartFlagTxt)
+    M.start_nvim_qt()
+    M.quit_nvim_qt()
+  end
+
+  function M.restart_nvim_qt_opencurfile()
+    pcall(vim.fn.writefile, { 2, vim.api.nvim_buf_get_name(0), }, RestartFlagTxt)
+    M.start_nvim_qt()
+    M.quit_nvim_qt()
+  end
+end
+
 M.dp_plugins()
 M.map_lazy_whichkey()
 M.test1()
+M.nvim_qt()
 
 require 'which-key'.register {
   ['<leader>a'] = { name = 'test', },
@@ -189,6 +225,16 @@ require 'which-key'.register {
 
 require 'which-key'.register {
   ['<leader>aa'] = { function() M.source_file() end, 'test: source_file', mode = { 'n', 'v', }, silent = true, },
+}
+
+require 'which-key'.register {
+  ['<leader>an'] = { name = 'nvim_qt', },
+  ['<leader>anr'] = { name = 'nvim_qt.restart', mode = { 'n', 'v', }, },
+  ['<leader>anrs'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
+  ['<leader>anro'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>anj'] = { name = 'nvim_qt.just', mode = { 'n', 'v', }, },
+  ['<leader>anjq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
+  ['<leader>anjs'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
 }
 
 return M
