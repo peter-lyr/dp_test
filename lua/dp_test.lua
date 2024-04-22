@@ -170,7 +170,6 @@ M.test1()
 
 require 'which-key'.register {
   ['<leader>a'] = { name = 'test', },
-  ['<leader>aa'] = { function() M.source_file() end, 'test: source_file', mode = { 'n', 'v', }, silent = true, },
 }
 
 require 'which-key'.register {
@@ -188,4 +187,9 @@ require 'which-key'.register {
   ['<leader>admtl'] = { function() M.map_from_whichkey_to_lazy() end, 'test.more.map_lazy_whichkey: map_from_whichkey_to_lazy', mode = { 'n', 'v', }, silent = true, },
 }
 
+require 'which-key'.register {
+  ['<leader>aa'] = { function() M.source_file() end, 'test: source_file', mode = { 'n', 'v', }, silent = true, },
+}
+
 return M
+
