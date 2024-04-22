@@ -202,33 +202,7 @@ function M.map()
   end
 end
 
--- function M.charstr()
---   function M.getcharstr(charstr)
---     if not charstr then
---       charstr = vim.fn.getcharstr()
---     end
---     local temp = {}
---     for i in string.gmatch(charstr, '.') do
---       temp[#temp + 1] = string.byte(i, 1)
---     end
---     return temp
---   end
---
---   function M.getkeyhex()
---     local charstr = vim.fn.getcharstr()
---     print(charstr, M.getcharstr(charstr))
---   end
---
---   vim.api.nvim_create_user_command('GetKeyHex', function()
---     M.getkeyhex()
---   end, {
---     nargs = 0,
---     desc = 'GetKeyHex',
---   })
--- end
-
 M.dp_plugins()
 M.map()
--- M.charstr()
 
 return M
