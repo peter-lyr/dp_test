@@ -6,17 +6,13 @@ if not sta then return print('Dp_base is required!', debug.getinfo(1)['source'])
 
 if B.check_plugins {
       'folke/which-key.nvim',
+      'natecraddock/sessions.nvim',
       'git@github.com:peter-lyr/dp_lsp',
     } then
   return
 end
 
 M.source_fts = { 'lua', 'vim', }
-
--- M.restart_flag = B.read_table_from_file(RestartFlagTxt)
--- print("vim.inspect(M.restart_flag):", vim.inspect(M.restart_flag))
-
--- B.write_table_to_file(RestartFlagTxt, M.restart_flag)
 
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
