@@ -31,36 +31,27 @@ function M.dp_plugins()
     end
   end
 
-  vim.api.nvim_create_user_command('DpBranchStatus', function()
+  function M.branch_status()
     M.run_one_do {
       'git branch -v',
       'git status -s',
     }
-  end, {
-    nargs = 0,
-    desc = 'DpShow',
-  })
+  end
 
-  vim.api.nvim_create_user_command('DpAddCommitPushDot', function()
+  function M.add_commit_push_dot()
     M.run_multi_do {
       'git add .',
       string.format('git commit -m "%s"', vim.fn.input('commit info: ', '.')),
       'git push',
     }
-  end, {
-    nargs = 0,
-    desc = 'DpPushDot',
-  })
+  end
 
-  vim.api.nvim_create_user_command('DpCheckOutMainPull', function()
+  function M.checkout_main_pull()
     M.run_multi_do {
       'git checkout main',
       'git pull',
     }
-  end, {
-    nargs = 0,
-    desc = 'DpCheckOutMainPull',
-  })
+  end
 end
 
 function M.map()
@@ -188,8 +179,16 @@ M.map()
 M.test1()
 
 require 'which-key'.register {
-  ['<leader>a'] = { name = 'markdown', },
+  ['<leader>a'] = { name = 'test', },
   ['<leader>aa'] = { function() M.source_file() end, 'test: source_file', mode = { 'n', 'v', }, silent = true, },
+}
+
+require 'which-key'.register {
+  ['<leader>ad'] = { name = 'test.more', },
+  ['<leader>adp'] = { name = 'test.more.dp_plugins', },
+  ['<leader>adpb'] = { function() M.branch_status() end, 'test.more.dp_plugins: branch_status', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>adpa'] = { function() M.add_commit_push_dot() end, 'test.more.dp_plugins: add_commit_push_dot', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>adpc'] = { function() M.checkout_main_pull() end, 'test.more.dp_plugins: checkout_main_pull', mode = { 'n', 'v', }, silent = true, },
 }
 
 return M
