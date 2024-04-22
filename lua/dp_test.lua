@@ -54,14 +54,9 @@ function M.dp_plugins()
   end
 end
 
-function M.map()
-  vim.api.nvim_create_user_command('MapFromLazyToWhichkey', function(params)
-    M.map_from_lazy_to_whichkey(unpack(params['fargs']))
-  end, { nargs = 0, })
-  function M.map_from_lazy_to_whichkey(fname)
-    if not fname then
-      fname = string.gsub(vim.api.nvim_buf_get_name(0), '/', '\\')
-    end
+function M.map_lazy_whichkey()
+  function M.map_from_lazy_to_whichkey()
+    local fname = string.gsub(vim.api.nvim_buf_get_name(0), '/', '\\')
     if #fname == 0 then
       return
     end
@@ -110,13 +105,8 @@ function M.map()
     end)
   end
 
-  vim.api.nvim_create_user_command('MapFromWhichkeyToLazy', function(params)
-    M.map_from_whichkey_to_lazy(unpack(params['fargs']))
-  end, { nargs = 0, })
-  function M.map_from_whichkey_to_lazy(fname)
-    if not fname then
-      fname = string.gsub(vim.api.nvim_buf_get_name(0), '/', '\\')
-    end
+  function M.map_from_whichkey_to_lazy()
+    local fname = string.gsub(vim.api.nvim_buf_get_name(0), '/', '\\')
     if #fname == 0 then
       return
     end
@@ -175,7 +165,7 @@ function M.test1()
 end
 
 M.dp_plugins()
-M.map()
+M.map_lazy_whichkey()
 M.test1()
 
 require 'which-key'.register {
@@ -189,6 +179,13 @@ require 'which-key'.register {
   ['<leader>adpb'] = { function() M.branch_status() end, 'test.more.dp_plugins: branch_status', mode = { 'n', 'v', }, silent = true, },
   ['<leader>adpa'] = { function() M.add_commit_push_dot() end, 'test.more.dp_plugins: add_commit_push_dot', mode = { 'n', 'v', }, silent = true, },
   ['<leader>adpc'] = { function() M.checkout_main_pull() end, 'test.more.dp_plugins: checkout_main_pull', mode = { 'n', 'v', }, silent = true, },
+}
+
+require 'which-key'.register {
+  ['<leader>adm'] = { name = 'test.more.map_lazy_whichkey', },
+  ['<leader>admt'] = { name = 'test.more.map_lazy_whichkey.to', },
+  ['<leader>admtw'] = { function() M.map_from_lazy_to_whichkey() end, 'test.more.map_lazy_whichkey: map_from_lazy_to_whichkey', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>admtl'] = { function() M.map_from_whichkey_to_lazy() end, 'test.more.map_lazy_whichkey: map_from_whichkey_to_lazy', mode = { 'n', 'v', }, silent = true, },
 }
 
 return M
