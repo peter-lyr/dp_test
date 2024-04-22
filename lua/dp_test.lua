@@ -192,4 +192,3 @@ require 'which-key'.register {
 }
 
 return M
-
