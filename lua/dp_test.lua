@@ -10,6 +10,8 @@ if B.check_plugins {
   return
 end
 
+M.source_fts = { 'lua', 'vim', }
+
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -168,7 +170,26 @@ function M.map()
   end
 end
 
+function M.test1()
+  function M.source_file(file)
+    if not file then file = B.buf_get_name() end
+    if not B.is_file_in_filetypes(file, M.source_fts) then
+      B.echo('not a %s file', vim.fn.join(M.source_fts, ' or '))
+      return
+    end
+    package.loaded[B.getlua(B.rep(file))] = nil
+    B.print('source %s', file)
+    B.cmd('source %s', file)
+  end
+end
+
 M.dp_plugins()
 M.map()
+M.test1()
+
+require 'which-key'.register {
+  ['<leader>a'] = { name = 'markdown', },
+  ['<leader>aa'] = { function() M.source_file() end, 'test: source_file', mode = { 'n', 'v', }, silent = true, },
+}
 
 return M
