@@ -275,9 +275,9 @@ function M.show()
     local end_time = vim.fn.reltimefloat(vim.fn.reltime(start_time))
     local timing = string.format('timing: %.3f ms', end_time * 1000)
     if start_index == 0 then
-      B.notify_info { timing, vim.fn.join(items, '\n'), }
+      B.notify_info({ timing, vim.fn.join(items, '\n'), }, 1000 * 60 * 60 * 24)
     else
-      B.notify_info_append { timing, vim.fn.join(items, '\n'), }
+      B.notify_info_append({ timing, vim.fn.join(items, '\n'), }, 1000 * 60 * 60 * 24)
     end
     return #items
   end
