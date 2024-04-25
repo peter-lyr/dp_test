@@ -32,7 +32,8 @@ function M.dp_plugins()
   function M.run_multi_do(cmd_list, check)
     local dp_plugins = B.get_dp_plugins()
     for _, dp in ipairs(dp_plugins) do
-      local result = vim.fn.systemlist(check)
+      local t = string.format('%s && %s', B.system_cd(dp), check)
+      local result = vim.fn.trim(vim.fn.system(t))
       if #result > 0 then
         local temp = vim.fn.join(cmd_list, ' && ')
         B.system_run('start', string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp))
@@ -52,7 +53,7 @@ function M.dp_plugins()
       'git add .',
       string.format('git commit -m "%s"', vim.fn.input('commit info: ', '.')),
       'git push',
-    }, { 'git', 'status', '-s', })
+    }, 'git status -s')
   end
 
   function M.checkout_main_pull()
