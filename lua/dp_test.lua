@@ -9,6 +9,7 @@ if B.check_plugins {
       'folke/which-key.nvim',
       'natecraddock/sessions.nvim',
       'git@github.com:peter-lyr/dp_lsp',
+      'git@github.com:peter-lyr/dp_vimleavepre',
     } then
   return
 end
@@ -170,9 +171,8 @@ function M.test1()
 end
 
 function M.nvim_qt()
-  function M.start_nvim_qt()
-    pcall(vim.cmd, 'SessionsSave')
-    pcall(vim.cmd, 'wshada!')
+  function M.start_nvim_qt(restart)
+    require 'dp_vimleavepre'.leave()
     local rtp = vim.fn.expand(string.match(vim.fn.execute 'set rtp', ',([^,]+)\\share\\nvim\\runtime'))
     vim.fn.writefile({
       'import os',
@@ -190,12 +190,16 @@ function M.nvim_qt()
       -- 'os.system(r"pause")',
     }, RestartNvimQtPy)
     vim.cmd(string.format([[silent !start cmd /c "%s"]], RestartNvimQtPy))
-    pcall(vim.fn.writefile, { 0, }, RestartReadyTxt)
-    B.aucmd({ 'VimLeave', }, 'start_nvim_qt.VimLeave', {
-      callback = function()
-        pcall(vim.fn.writefile, { 1, }, RestartReadyTxt)
-      end,
-    })
+    if restart then
+      pcall(vim.fn.writefile, { 0, }, RestartReadyTxt)
+      B.aucmd({ 'VimLeave', }, 'start_nvim_qt.VimLeave', {
+        callback = function()
+          pcall(vim.fn.writefile, { 1, }, RestartReadyTxt)
+        end,
+      })
+    else
+      pcall(vim.fn.writefile, { 1, }, RestartReadyTxt)
+    end
   end
 
   function M.quit_nvim_qt()
@@ -204,13 +208,13 @@ function M.nvim_qt()
 
   function M.restart_nvim_qt_sessionload()
     pcall(vim.fn.writefile, { 1, }, RestartFlagTxt)
-    M.start_nvim_qt()
+    M.start_nvim_qt(1)
     M.quit_nvim_qt()
   end
 
   function M.restart_nvim_qt_opencurfile()
     pcall(vim.fn.writefile, { 2, vim.api.nvim_buf_get_name(0), }, RestartFlagTxt)
-    M.start_nvim_qt()
+    M.start_nvim_qt(1)
     M.quit_nvim_qt()
   end
 end
