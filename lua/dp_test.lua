@@ -251,13 +251,14 @@ function M.show()
       start_index = 0
     end
     local items = {}
-    local width = 0
-    for _, v in ipairs(temp) do
-      if width < #v[1] then
-        width = #v[1]
-      end
-    end
-    local str = '# %2d. [%-' .. width .. 's]: %s'
+    -- local width = 0
+    -- for _, v in ipairs(temp) do
+    --   if width < #v[1] then
+    --     width = #v[1]
+    --   end
+    -- end
+    -- local str = '# %2d. [%-' .. width .. 's]: %s'
+    local str = '# %2d. [%-s]: %s'
     for k, v in ipairs(temp) do
       local k2, v2 = unpack(v)
       v2 = vim.fn.trim(v2())
@@ -297,24 +298,24 @@ function M.show()
     end)
     M.len = 0
     M._show_info_one {
-      { 'cwd',          function() return string.format('`%s`', vim.loop.cwd()) end, },
-      { 'datetime',     function() return vim.fn.strftime '%Y-%m-%d %H:%M:%S `%a`' end, },
-      { 'fileencoding', function() return string.format('`%s`', vim.opt.fileencoding:get()) end, },
-      { 'fileformat',   function() return string.format('%s', vim.bo.fileformat) end, },
-      { 'fname',        function() return string.format('`%s`', vim.fn.bufname()) end, },
-      { 'mem',          function() return string.format('%dM', vim.loop.resident_set_memory() / 1024 / 1024) end, },
-      { 'startuptime',  function() return string.format('`%.3f` ms', EndTime * 1000) end, },
+      { '当前目录', function() return string.format('`%s`', vim.loop.cwd()) end, },
+      { '日期时间', function() return vim.fn.strftime '%Y-%m-%d %H:%M:%S `%a`' end, },
+      { '文件编码', function() return string.format('`%s`', vim.opt.fileencoding:get()) end, },
+      { '文件格式', function() return string.format('%s', vim.bo.fileformat) end, },
+      { '文件名称', function() return string.format('`%s`', vim.fn.bufname()) end, },
+      { '占用内存', function() return string.format('%dM', vim.loop.resident_set_memory() / 1024 / 1024) end, },
+      { '上电时长', function() return string.format('`%.3f` ms', EndTime * 1000) end, },
     }
     M._show_info_one {
-      { 'fsize',            M._filesize, },
-      { 'git added fsize',  M.get_git_added_file_total_fsize, },
-      { 'git ignore fsize', M.get_git_ignore_file_total_fsize, },
+      { '当前文件大小', M._filesize, },
+      { '仓库已提交文件总大小', M.get_git_added_file_total_fsize, },
+      { '仓库已忽略文件总大小', M.get_git_ignore_file_total_fsize, },
     }
     M._show_info_one {
-      { 'git branch name',  vim.fn['gitbranch#name'], },
-      { 'git commit count', function() return '`' .. vim.fn.trim(vim.fn.system 'git rev-list --count HEAD') .. '` commits' end, },
-      { 'git added  files', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files | wc -l') .. '` files added' end, },
-      { 'git ignore files', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files -o | wc -l') .. '` files ignored' end, },
+      { '仓库分支名称',  vim.fn['gitbranch#name'], },
+      { '仓库已提交总次数', function() return '`' .. vim.fn.trim(vim.fn.system 'git rev-list --count HEAD') .. '` commits' end, },
+      { '仓库已提交文件总数', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files | wc -l') .. '` files added' end, },
+      { '仓库已忽略文件总数', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files -o | wc -l') .. '` files ignored' end, },
     }
   end
 end
