@@ -15,6 +15,8 @@ end
 
 M.source_fts = { 'lua', 'vim', }
 
+M.show_info_en = 1
+
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -196,10 +198,132 @@ function M.nvim_qt()
   end
 end
 
+function M.show()
+  function M._get_human_fsize(fsize)
+    local suffixes = { 'B', 'K', 'M', 'G', }
+    local i = 1
+    while fsize > 1024 and i < #suffixes do
+      fsize = fsize / 1024
+      i = i + 1
+    end
+    local format = i == 1 and '%d%s' or '%.1f%s'
+    return string.format(format, fsize, suffixes[i])
+  end
+
+  function M._format(size, human)
+    return string.format('%-10s %6s', string.format('%s', size), string.format('`%s`', human))
+  end
+
+  function M._filesize()
+    local file = vim.fn.expand '%:p'
+    if file == nil or #file == 0 then
+      return ''
+    end
+    local size = vim.fn.getfsize(file)
+    if size <= 0 then
+      return ''
+    end
+    return M._format(size, M._get_human_fsize(size))
+  end
+
+  function M.get_git_added_file_total_fsize()
+    local total_fsize = 0
+    for fname in string.gmatch(vim.fn.system 'git ls-files', '([^\n]+)') do
+      total_fsize = total_fsize + vim.fn.getfsize(fname)
+    end
+    return M._format(total_fsize, M._get_human_fsize(total_fsize))
+  end
+
+  function M.get_git_ignore_file_total_fsize()
+    local total_fsize = 0
+    for fname in string.gmatch(vim.fn.system 'git ls-files -o', '([^\n]+)') do
+      total_fsize = total_fsize + vim.fn.getfsize(fname)
+    end
+    return M._format(total_fsize, M._get_human_fsize(total_fsize))
+  end
+
+  function M.show_info_allow()
+    M.show_info_en = 1
+  end
+
+  function M._show_info_do(temp, start_index)
+    if not start_index then
+      start_index = 0
+    end
+    local items = {}
+    local width = 0
+    for _, v in ipairs(temp) do
+      if width < #v[1] then
+        width = #v[1]
+      end
+    end
+    local str = '# %2d. [%-' .. width .. 's]: %s'
+    for k, v in ipairs(temp) do
+      local k2, v2 = unpack(v)
+      v2 = vim.fn.trim(v2())
+      table.insert(items, 1, string.format(str, k + start_index, k2, v2))
+    end
+    return items
+  end
+
+  function M._show_info_one_do(temp, start_index)
+    if not start_index then
+      start_index = 0
+    end
+    local start_time = vim.fn.reltime()
+    local items = M._show_info_do(temp, start_index)
+    local end_time = vim.fn.reltimefloat(vim.fn.reltime(start_time))
+    local timing = string.format('timing: %.3f ms', end_time * 1000)
+    if start_index == 0 then
+      B.notify_info { timing, vim.fn.join(items, '\n'), }
+    else
+      B.notify_info_append { timing, vim.fn.join(items, '\n'), }
+    end
+    return #items
+  end
+
+  function M._show_info_one(temp)
+    M.len = M.len + M._show_info_one_do(temp, M.len)
+  end
+
+  function M.show_info()
+    if not M.show_info_en then
+      B.echo 'please wait'
+      return
+    end
+    M.show_info_en = nil
+    B.set_timeout(1000, function()
+      M.show_info_en = 1
+    end)
+    M.len = 0
+    M._show_info_one {
+      { 'cwd',          function() return string.format('`%s`', vim.loop.cwd()) end, },
+      { 'datetime',     function() return vim.fn.strftime '%Y-%m-%d %H:%M:%S `%a`' end, },
+      { 'fileencoding', function() return string.format('`%s`', vim.opt.fileencoding:get()) end, },
+      { 'fileformat',   function() return string.format('%s', vim.bo.fileformat) end, },
+      { 'fname',        function() return string.format('`%s`', vim.fn.bufname()) end, },
+      { 'mem',          function() return string.format('%dM', vim.loop.resident_set_memory() / 1024 / 1024) end, },
+      { 'startuptime',  function() return string.format('`%.3f` ms', EndTime * 1000) end, },
+    }
+    M._show_info_one {
+      { 'fsize',            M._filesize, },
+      { 'git added fsize',  M.get_git_added_file_total_fsize, },
+      { 'git ignore fsize', M.get_git_ignore_file_total_fsize, },
+    }
+    M._show_info_one {
+      { 'git branch name',  vim.fn['gitbranch#name'], },
+      { 'git commit count', function() return '`' .. vim.fn.trim(vim.fn.system 'git rev-list --count HEAD') .. '` commits' end, },
+      { 'git added  files', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files | wc -l') .. '` files added' end, },
+      { 'git ignore files', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files -o | wc -l') .. '` files ignored' end, },
+    }
+  end
+end
+
 M.dp_plugins()
 M.map_lazy_whichkey()
 M.test1()
 M.nvim_qt()
+M.show()
 
 require 'which-key'.register {
   ['<leader>a'] = { name = 'test', },
@@ -236,6 +360,11 @@ require 'which-key'.register {
   ['<leader>anjs'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
   ['<leader>anq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
   ['<leader>an<leader>'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
+}
+
+require 'which-key'.register {
+  ['<leader>as'] = { name = 'show', },
+  ['<leader>asi'] = { function() M.show_info() end, 'show: info', mode = { 'n', 'v', }, },
 }
 
 return M
