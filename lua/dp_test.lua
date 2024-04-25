@@ -175,10 +175,27 @@ function M.nvim_qt()
     pcall(vim.cmd, 'wshada!')
     local rtp = vim.fn.expand(string.match(vim.fn.execute 'set rtp', ',([^,]+)\\share\\nvim\\runtime'))
     vim.fn.writefile({
-      string.format('cd %s\\bin', rtp),
-      string.format('start /d %s nvim-qt.exe', vim.loop.cwd()),
-    }, RestartNvimQtBat)
-    vim.cmd(string.format([[silent !start cmd /c "%s"]], RestartNvimQtBat))
+      'import os',
+      'import time',
+      'time.sleep(0.001)',
+      'for _ in range(50*2):',
+      string.format('  with open(r"%s", "rb") as f:', RestartReadyTxt),
+      '    c = f.read().strip()',
+      '    print(c)',
+      '    if c == b"1":',
+      '      break',
+      '  time.sleep(0.02)',
+      string.format('os.system(r"cd %s\\bin")', rtp),
+      string.format('os.system(r"start /d %s nvim-qt.exe")', vim.loop.cwd()),
+      -- 'os.system(r"pause")',
+    }, RestartNvimQtPy)
+    vim.cmd(string.format([[silent !start cmd /c "%s"]], RestartNvimQtPy))
+    pcall(vim.fn.writefile, { 0, }, RestartReadyTxt)
+    B.aucmd({ 'VimLeave', }, 'start_nvim_qt.VimLeave', {
+      callback = function()
+        pcall(vim.fn.writefile, { 1, }, RestartReadyTxt)
+      end,
+    })
   end
 
   function M.quit_nvim_qt()
@@ -312,7 +329,7 @@ function M.show()
       { '仓库已忽略文件总大小', M.get_git_ignore_file_total_fsize, },
     }
     M._show_info_one {
-      { '仓库当前分支的名称',  vim.fn['gitbranch#name'], },
+      { '仓库当前分支的名称', vim.fn['gitbranch#name'], },
       { '仓库已提交的总次数', function() return '`' .. vim.fn.trim(vim.fn.system 'git rev-list --count HEAD') .. '` commits' end, },
       { '仓库已提交文件总数', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files | wc -l') .. '` files added' end, },
       { '仓库已忽略文件总数', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files -o | wc -l') .. '` files ignored' end, },
