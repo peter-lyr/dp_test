@@ -307,13 +307,13 @@ function M.show()
       { '上电时长', function() return string.format('`%.3f` ms', EndTime * 1000) end, },
     }
     M._show_info_one {
-      { '当前文件大小', M._filesize, },
+      { '当前的文件所占的大小', M._filesize, },
       { '仓库已提交文件总大小', M.get_git_added_file_total_fsize, },
       { '仓库已忽略文件总大小', M.get_git_ignore_file_total_fsize, },
     }
     M._show_info_one {
-      { '仓库分支名称',  vim.fn['gitbranch#name'], },
-      { '仓库已提交总次数', function() return '`' .. vim.fn.trim(vim.fn.system 'git rev-list --count HEAD') .. '` commits' end, },
+      { '仓库当前分支的名称',  vim.fn['gitbranch#name'], },
+      { '仓库已提交的总次数', function() return '`' .. vim.fn.trim(vim.fn.system 'git rev-list --count HEAD') .. '` commits' end, },
       { '仓库已提交文件总数', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files | wc -l') .. '` files added' end, },
       { '仓库已忽略文件总数', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files -o | wc -l') .. '` files ignored' end, },
     }
