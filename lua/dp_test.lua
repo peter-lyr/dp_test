@@ -185,7 +185,7 @@ function M.nvim_qt()
       'for _ in range(50*2):',
       string.format('  with open(r"%s", "rb") as f:', RestartReadyTxt),
       '    c = f.read().strip()',
-      '    print(c)',
+      -- '    print(c)',
       '    if c == b"1":',
       '      break',
       '  time.sleep(0.02)',
@@ -218,6 +218,12 @@ function M.nvim_qt()
 
   function M.restart_nvim_qt_opencurfile()
     pcall(vim.fn.writefile, { 2, vim.api.nvim_buf_get_name(0), }, RestartFlagTxt)
+    M.start_nvim_qt(1)
+    M.quit_nvim_qt()
+  end
+
+  function M.restart_nvim_qt_opennothing()
+    pcall(vim.fn.writefile, {}, RestartFlagTxt)
     M.start_nvim_qt(1)
     M.quit_nvim_qt()
   end
@@ -378,9 +384,11 @@ require 'which-key'.register {
   ['<leader>an'] = { name = 'nvim_qt', },
   ['<leader>anr'] = { name = 'nvim_qt.restart', mode = { 'n', 'v', }, },
   ['<leader>anrs'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
-  ['<leader>anro'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>anrc'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>anrn'] = { function() M.restart_nvim_qt_opennothing() end, 'nvim_qt.restart: opennothing', mode = { 'n', 'v', }, },
   ['<leader>ans'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
-  ['<leader>ano'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>anc'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>ann'] = { function() M.restart_nvim_qt_opennothing() end, 'nvim_qt.restart: opennothing', mode = { 'n', 'v', }, },
   ['<leader>anj'] = { name = 'nvim_qt.just', mode = { 'n', 'v', }, },
   ['<leader>anjq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
   ['<leader>anjs'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
