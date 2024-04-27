@@ -216,7 +216,7 @@ function M.nvim_qt()
   end
 
   function M.quit_nvim_qt()
-    vim.cmd 'qa'
+    vim.cmd 'qa!'
   end
 
   function M.restart_nvim_qt_sessionload()
