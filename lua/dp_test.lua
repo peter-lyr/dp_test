@@ -404,6 +404,12 @@ require 'which-key'.register {
 }
 
 require 'which-key'.register {
+  ['<leader>am'] = { name = 'mes', },
+  ['<leader>amm'] = { '<cmd>mes<cr>', 'mes', mode = { 'n', 'v', }, },
+  ['<leader>amc'] = { '<cmd>mes clear<cr>', 'mes: clear', mode = { 'n', 'v', }, },
+}
+
+require 'which-key'.register {
   ['<leader>as'] = { name = 'show', },
   ['<leader>asi'] = { function() M.show_info() end, 'show: info', mode = { 'n', 'v', }, },
 }
