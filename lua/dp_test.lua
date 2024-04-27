@@ -51,7 +51,7 @@ function M.dp_plugins()
   function M.add_commit_push_dot()
     local info = vim.fn.input('commit info: ', '.')
     if not B.is(info) then
-      print('Canceled, commit info is Empty')
+      print 'Canceled, commit info is Empty'
       return
     end
     M.run_multi_do({
@@ -174,7 +174,7 @@ function M.test1()
       return
     end
     package.loaded[B.getlua(B.rep(file))] = nil
-    B.print('source %s', file)
+    B.echo('source %s', file)
     B.cmd('source %s', file)
   end
 end
