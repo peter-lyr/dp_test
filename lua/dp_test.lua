@@ -49,9 +49,14 @@ function M.dp_plugins()
   end
 
   function M.add_commit_push_dot()
+    local info = vim.fn.input('commit info: ', '.')
+    if not B.is(info) then
+      print('Canceled, commit info is Empty')
+      return
+    end
     M.run_multi_do({
       'git add .',
-      string.format('git commit -m "%s"', vim.fn.input('commit info: ', '.')),
+      string.format('git commit -m "%s"', info),
       'git push',
     }, 'git status -s')
   end
