@@ -181,7 +181,9 @@ end
 
 function M.nvim_qt()
   function M.start_nvim_qt(restart)
-    require 'dp_vimleavepre'.leave()
+    if restart then
+      require 'dp_vimleavepre'.leave()
+    end
     local rtp = vim.fn.expand(string.match(vim.fn.execute 'set rtp', ',([^,]+)\\share\\nvim\\runtime'))
     vim.fn.writefile({
       'import os',
