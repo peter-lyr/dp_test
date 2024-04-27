@@ -365,9 +365,47 @@ function M.mes()
     vim.fn.mkdir(M.temp_mes_dir)
   end
   function M.mes_output_to_file()
-    local file = M.temp_mes_dir .. vim.fn.strftime '%Y%m%d%H%M%S.txt'
+    local lines = vim.fn.split(vim.fn.trim(vim.fn.execute 'mes'), '\n')
+    if #lines == 0 then
+      return
+    end
+    local file = M.temp_mes_dir .. vim.fn.strftime 'mes-%Y%m%d%H%M%S.txt'
     B.wingoto_file_or_open(file)
-    vim.fn.append(vim.fn.line '.', vim.fn.split(vim.fn.execute 'mes', '\n'))
+    lines = vim.tbl_filter(function(line)
+      return #line > 0
+    end, lines)
+    local sep = { '========= mes below =========', '', }
+    lines = B.merge_tables(sep, lines)
+    vim.fn.append(vim.fn.line '$', lines)
+  end
+
+  function M.notifications_output_to_file()
+    local lines = vim.fn.split(vim.fn.trim(vim.fn.execute 'Notifications'), '\n')
+    if #lines == 0 then
+      return
+    end
+    local file = M.temp_mes_dir .. vim.fn.strftime 'notifications-%Y%m%d%H%M%S.txt'
+    B.wingoto_file_or_open(file)
+    local sep = { '========= Notifications below =========', '', }
+    lines = B.merge_tables(sep, lines)
+    vim.fn.append(vim.fn.line '$', lines)
+  end
+
+  function M.mes_notifications_output_to_file()
+    local lines = vim.fn.split(vim.fn.trim(vim.fn.execute 'mes'), '\n')
+    local lines_2 = vim.fn.split(vim.fn.trim(vim.fn.execute 'Notifications'), '\n')
+    if #lines == 0 and #lines_2 == 0 then
+      return
+    end
+    local file = M.temp_mes_dir .. vim.fn.strftime 'mes-notifications-%Y%m%d%H%M%S.txt'
+    B.wingoto_file_or_open(file)
+    lines = vim.tbl_filter(function(line)
+      return #line > 0
+    end, lines)
+    local sep = { '========= mes below =========', '', }
+    local sep_2 = { '', '========= Notifications below =========', '', }
+    lines = B.merge_tables(sep, lines, sep_2, lines_2)
+    vim.fn.append(vim.fn.line '$', lines)
   end
 end
 
@@ -420,8 +458,12 @@ require 'which-key'.register {
 require 'which-key'.register {
   ['<leader>am'] = { name = 'mes', },
   ['<leader>amm'] = { '<cmd>mes<cr>', 'mes', mode = { 'n', 'v', }, },
+  ['<leader>amn'] = { '<cmd>Notifications<cr>', 'Notifications', mode = { 'n', 'v', }, },
   ['<leader>amc'] = { '<cmd>mes clear<cr>', 'mes: clear', mode = { 'n', 'v', }, },
-  ['<leader>ams'] = { function() M.mes_output_to_file() end, 'mes: mes_output_to_file', mode = { 'n', 'v', }, },
+  ['<leader>ams'] = { name = 'mes.split', },
+  ['<leader>amsm'] = { function() M.mes_output_to_file() end, 'mes.split: mes_output_to_file', mode = { 'n', 'v', }, },
+  ['<leader>amsn'] = { function() M.notifications_output_to_file() end, 'mes.split: notifications_output_to_file', mode = { 'n', 'v', }, },
+  ['<leader>amsa'] = { function() M.mes_notifications_output_to_file() end, 'mes.split: mes_notifications_output_to_file', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
