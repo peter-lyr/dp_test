@@ -18,6 +18,8 @@ M.source_fts = { 'lua', 'vim', }
 
 M.show_info_en = 1
 
+M.temp_mes_dir = DepeiTemp .. '\\mes\\'
+
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -358,11 +360,23 @@ function M.show()
   end
 end
 
+function M.mes()
+  if vim.fn.isdirectory(M.temp_mes_dir) == 0 then
+    vim.fn.mkdir(M.temp_mes_dir)
+  end
+  function M.mes_output_to_file()
+    local file = M.temp_mes_dir .. vim.fn.strftime '%Y%m%d%H%M%S.txt'
+    B.wingoto_file_or_open(file)
+    vim.fn.append(vim.fn.line '.', vim.fn.split(vim.fn.execute 'mes', '\n'))
+  end
+end
+
 M.dp_plugins()
 M.map_lazy_whichkey()
 M.test1()
 M.nvim_qt()
 M.show()
+M.mes()
 
 require 'which-key'.register {
   ['<leader>a'] = { name = 'test', },
@@ -407,6 +421,7 @@ require 'which-key'.register {
   ['<leader>am'] = { name = 'mes', },
   ['<leader>amm'] = { '<cmd>mes<cr>', 'mes', mode = { 'n', 'v', }, },
   ['<leader>amc'] = { '<cmd>mes clear<cr>', 'mes: clear', mode = { 'n', 'v', }, },
+  ['<leader>ams'] = { function() M.mes_output_to_file() end, 'mes: mes_output_to_file', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
