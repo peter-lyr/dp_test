@@ -65,6 +65,7 @@ function M.dp_plugins()
 
   function M.checkout_main_pull()
     M.run_multi_do {
+      'git checkout -- .',
       'git checkout main',
       'git pull',
     }
