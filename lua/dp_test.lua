@@ -359,6 +359,12 @@ function M.show()
       { '仓库已忽略文件总数', function() return '`' .. vim.fn.trim(vim.fn.system 'git ls-files -o | wc -l') .. '` files ignored' end, },
     }
   end
+
+  function M.show_info_startup()
+    if StartTimeList then
+      B.notify_info_append(B.merge_tables({ 'startup', }, StartTimeList), 1000 * 60 * 60 * 24)
+    end
+  end
 end
 
 function M.mes()
@@ -470,6 +476,7 @@ require 'which-key'.register {
 require 'which-key'.register {
   ['<leader>as'] = { name = 'show', },
   ['<leader>asi'] = { function() M.show_info() end, 'show: info', mode = { 'n', 'v', }, },
+  ['<leader>ass'] = { function() M.show_info_startup() end, 'show: info', mode = { 'n', 'v', }, },
 }
 
 return M
