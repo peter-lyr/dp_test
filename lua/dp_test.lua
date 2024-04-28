@@ -183,9 +183,11 @@ function M.test1()
 end
 
 function M.nvim_qt()
-  function M.start_nvim_qt(restart)
-    if restart then
+  function M.start_nvim_qt(flag)
+    if flag == 'restart' then
       require 'dp_vimleavepre'.leave()
+    elseif flag == 'start' then
+      require 'dp_vimleavepre'.save()
     end
     local rtp = vim.fn.expand(string.match(vim.fn.execute 'set rtp', ',([^,]+)\\share\\nvim\\runtime'))
     vim.fn.writefile({
@@ -204,7 +206,7 @@ function M.nvim_qt()
       -- 'os.system(r"pause")',
     }, RestartNvimQtPy)
     vim.cmd(string.format([[silent !start cmd /c "%s"]], RestartNvimQtPy))
-    if restart then
+    if flag == 'restart' then
       pcall(vim.fn.writefile, { 0, }, RestartReadyTxt)
       B.aucmd({ 'VimLeave', }, 'start_nvim_qt.VimLeave', {
         callback = function()
@@ -222,20 +224,25 @@ function M.nvim_qt()
 
   function M.restart_nvim_qt_sessionload()
     pcall(vim.fn.writefile, { 1, }, RestartFlagTxt)
-    M.start_nvim_qt(1)
+    M.start_nvim_qt 'restart'
     M.quit_nvim_qt()
   end
 
   function M.restart_nvim_qt_opencurfile()
     pcall(vim.fn.writefile, { 2, vim.api.nvim_buf_get_name(0), }, RestartFlagTxt)
-    M.start_nvim_qt(1)
+    M.start_nvim_qt 'restart'
     M.quit_nvim_qt()
   end
 
   function M.restart_nvim_qt_opennothing()
     pcall(vim.fn.writefile, {}, RestartFlagTxt)
-    M.start_nvim_qt(1)
+    M.start_nvim_qt 'restart'
     M.quit_nvim_qt()
+  end
+
+  function M.start_nvim_qt_sessionload()
+    pcall(vim.fn.writefile, { 1, }, RestartFlagTxt)
+    M.start_nvim_qt 'start'
   end
 end
 
@@ -460,6 +467,7 @@ require 'which-key'.register {
   ['<leader>anjs'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
   ['<leader>anq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
   ['<leader>an<leader>'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
+  ['<leader>ano'] = { function() M.start_nvim_qt_sessionload() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
