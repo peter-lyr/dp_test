@@ -190,6 +190,10 @@ function M.nvim_qt()
       require 'dp_vimleavepre'.save()
     end
     local rtp = vim.fn.expand(string.match(vim.fn.execute 'set rtp', ',([^,]+)\\share\\nvim\\runtime'))
+    if not B.is(rtp) then
+      print('rtp is nil, returned')
+      return
+    end
     vim.fn.writefile({
       'import os',
       'import time',
@@ -201,7 +205,7 @@ function M.nvim_qt()
       '    if c == b"1":',
       '      break',
       '  time.sleep(0.02)',
-      -- string.format('print(r"cd %s\\bin")', rtp),
+      string.format('print(r"cd %s\\bin")', rtp),
       string.format('os.system(r"cd %s\\bin")', rtp),
       -- string.format('print(r"start /d %s nvim-qt.exe")', vim.loop.cwd()),
       string.format('os.system(r"start /d %s nvim-qt.exe")', vim.loop.cwd()),
@@ -218,6 +222,7 @@ function M.nvim_qt()
     else
       pcall(vim.fn.writefile, { 1, }, RestartReadyTxt)
     end
+    return 1
   end
 
   function M.quit_nvim_qt()
@@ -226,20 +231,26 @@ function M.nvim_qt()
 
   function M.restart_nvim_qt_sessionload()
     pcall(vim.fn.writefile, { 1, }, RestartFlagTxt)
-    M.start_nvim_qt 'restart'
-    M.quit_nvim_qt()
+    local temp = M.start_nvim_qt 'restart'
+    if temp then
+      M.quit_nvim_qt()
+    end
   end
 
   function M.restart_nvim_qt_opencurfile()
     pcall(vim.fn.writefile, { 2, vim.api.nvim_buf_get_name(0), }, RestartFlagTxt)
-    M.start_nvim_qt 'restart'
-    M.quit_nvim_qt()
+    local temp = M.start_nvim_qt 'restart'
+    if temp then
+      M.quit_nvim_qt()
+    end
   end
 
   function M.restart_nvim_qt_opennothing()
     pcall(vim.fn.writefile, {}, RestartFlagTxt)
-    M.start_nvim_qt 'restart'
-    M.quit_nvim_qt()
+    local temp = M.start_nvim_qt 'restart'
+    if temp then
+      M.quit_nvim_qt()
+    end
   end
 
   function M.start_nvim_qt_sessionload()
