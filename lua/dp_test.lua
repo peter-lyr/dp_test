@@ -4,6 +4,8 @@ local sta, B = pcall(require, 'dp_base')
 
 if not sta then return print('Dp_base is required!', debug.getinfo(1)['source']) end
 
+M.source = B.getsource(debug.getinfo(1)['source'])
+
 if B.check_plugins {
       'git@github.com:peter-lyr/dp_init',
       'folke/which-key.nvim',
@@ -19,6 +21,10 @@ M.source_fts = { 'lua', 'vim', }
 M.show_info_en = 1
 
 M.temp_mes_dir = DepeiTemp .. '\\mes\\'
+
+M.dp_lazy_py_name = 'dp_lazy.py'
+
+M.dp_lazy_py = B.get_file(B.get_source_dot_dir(M.source), M.dp_lazy_py_name)
 
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
@@ -69,6 +75,14 @@ function M.dp_plugins()
       'git checkout main',
       'git pull',
     }
+  end
+
+  function M.dp_lazy_run()
+    B.system_run_histadd(
+      'start',
+      'copy /y %s %s && python %s',
+      M.dp_lazy_py, DataLazyPlugins, DataLazyPlugins .. '\\' .. M.dp_lazy_py_name
+    )
   end
 end
 
@@ -191,7 +205,7 @@ function M.nvim_qt()
     end
     local rtp = vim.fn.expand(string.match(vim.fn.execute 'set rtp', ',([^,]+)\\share\\nvim\\runtime'))
     if not B.is(rtp) then
-      print('rtp is nil, returned')
+      print 'rtp is nil, returned'
       return
     end
     vim.fn.writefile({
@@ -453,6 +467,7 @@ require 'which-key'.register {
   ['<leader>adpb'] = { function() M.branch_status() end, 'test.more.dp_plugins: branch_status', mode = { 'n', 'v', }, silent = true, },
   ['<leader>adpa'] = { function() M.add_commit_push_dot() end, 'test.more.dp_plugins: add_commit_push_dot', mode = { 'n', 'v', }, silent = true, },
   ['<leader>adpc'] = { function() M.checkout_main_pull() end, 'test.more.dp_plugins: checkout_main_pull', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>adpr'] = { function() M.dp_lazy_run() end, 'test.more.dp_plugins: dp_lazy_run', mode = { 'n', 'v', }, silent = true, },
 }
 
 require 'which-key'.register {
