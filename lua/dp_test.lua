@@ -58,6 +58,12 @@ function M.dp_plugins()
 
   function M.add_commit_push_dot()
     local info = vim.fn.input('commit info: ', '.')
+    info = string.gsub(info, '>', '^>')
+    info = string.gsub(info, '<', '^<')
+    info = string.gsub(info, '%^', '^^')
+    info = string.gsub(info, '%%', '^%')
+    info = string.gsub(info, '&', '^&')
+    info = string.gsub(info, '|', '^|')
     if not B.is(info) then
       print 'Canceled, commit info is Empty'
       return
