@@ -271,6 +271,11 @@ function M.nvim_qt()
     pcall(vim.fn.writefile, { 1, }, RestartFlagTxt)
     M.start_nvim_qt 'start'
   end
+
+  function M.start_nvim_qt_opencurfile()
+    pcall(vim.fn.writefile, { 2, vim.api.nvim_buf_get_name(0), }, RestartFlagTxt)
+    M.start_nvim_qt 'start'
+  end
 end
 
 function M.show()
@@ -483,19 +488,13 @@ require 'which-key'.register {
 
 require 'which-key'.register {
   ['<leader>tsn'] = { name = 'nvim_qt', },
-  ['<leader>tsnr'] = { name = 'nvim_qt.restart', mode = { 'n', 'v', }, },
-  ['<leader>tsnrs'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
-  ['<leader>tsnrc'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
-  ['<leader>tsnrn'] = { function() M.restart_nvim_qt_opennothing() end, 'nvim_qt.restart: opennothing', mode = { 'n', 'v', }, },
-  ['<leader>tsns'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
-  ['<leader>tsnc'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
-  ['<leader>tsnn'] = { function() M.restart_nvim_qt_opennothing() end, 'nvim_qt.restart: opennothing', mode = { 'n', 'v', }, },
-  ['<leader>tsnj'] = { name = 'nvim_qt.just', mode = { 'n', 'v', }, },
-  ['<leader>tsnjq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
-  ['<leader>tsnjs'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
+  ['<leader>tsn<leader>s'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
+  ['<leader>tsn<leader>c'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>tsn<leader>n'] = { function() M.restart_nvim_qt_opennothing() end, 'nvim_qt.restart: opennothing', mode = { 'n', 'v', }, },
+  ['<leader>tsnn'] = { function() M.start_nvim_qt() end, 'nvim_qt.start: opennothing', mode = { 'n', 'v', }, },
+  ['<leader>tsnc'] = { function() M.start_nvim_qt_opencurfile() end, 'nvim_qt.start: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>tsns'] = { function() M.start_nvim_qt_sessionload() end, 'nvim_qt.start: sessionsload', mode = { 'n', 'v', }, },
   ['<leader>tsnq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
-  ['<leader>tsn<leader>'] = { function() M.start_nvim_qt() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
-  ['<leader>tsno'] = { function() M.start_nvim_qt_sessionload() end, 'nvim_qt.just: start', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
