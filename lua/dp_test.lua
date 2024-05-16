@@ -16,15 +16,17 @@ if B.check_plugins {
   return
 end
 
-M.source_fts = { 'lua', 'vim', }
+M.source_fts         = { 'lua', 'vim', }
 
-M.show_info_en = 1
+M.show_info_en       = 1
 
-M.temp_mes_dir = DepeiTemp .. '\\mes\\'
+M.temp_mes_dir       = DepeiTemp .. '\\mes\\'
 
-M.dp_lazy_py_name = 'dp_lazy.py'
+M.dp_lazy_py_name    = 'dp_lazy.py'
 
-M.dp_lazy_py = B.get_file(B.get_source_dot_dir(M.source), M.dp_lazy_py_name)
+M.dp_lazy_py         = B.get_file(B.get_source_dot_dir(M.source), M.dp_lazy_py_name)
+
+M.programs_files_txt = DataSub .. 'programs-files.txt'
 
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
@@ -456,12 +458,166 @@ function M.mes()
   end
 end
 
+function M.programs()
+  function M.get_target_path(lnk_file)
+    local ext = string.match(lnk_file, '%.([^.]+)$')
+    if not B.is(vim.tbl_contains({ 'url', 'lnk', }, ext)) then
+      return lnk_file
+    end
+    vim.g.lnk_file = lnk_file
+    vim.g.target_path = nil
+    vim.cmd [[
+    python << EOF
+try:
+  import pythoncom
+except:
+  import os
+  os.system('pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host mirrors.aliyun.com pywin32')
+  import pythoncom
+from win32com.client import Dispatch
+lnk_file = vim.eval('g:lnk_file')
+pythoncom.CoInitialize()
+shell = Dispatch("WScript.Shell")
+try:
+  shortcut = shell.CreateShortCut(lnk_file)
+  target_path = shortcut.TargetPath
+  vim.command(f"""let g:target_path = '{target_path}'""")
+except:
+  pass
+EOF
+  ]]
+    return vim.g.target_path
+  end
+
+  function M.get_programs_files_uniq()
+    local programs_files = B.get_programs_files()
+    local path_programs_files = B.get_path_files()
+    local programs_files_uniq = B.merge_tables(vim.deepcopy(programs_files), vim.deepcopy(path_programs_files))
+    local programs_files_uniq_temp = vim.deepcopy(programs_files_uniq)
+    for _, programs_file in pairs(programs_files_uniq_temp) do
+      programs_file = M.get_target_path(programs_file)
+      if not B.is_in_tbl(programs_file, programs_files_uniq) then
+        programs_files_uniq[#programs_files_uniq + 1] = programs_file
+      end
+    end
+    B.write_table_to_file(M.programs_files_txt, programs_files_uniq)
+    return programs_files_uniq
+  end
+
+  function M.sel_open_programs_file()
+    local programs_files_uniq = B.read_table_from_file(M.programs_files_txt)
+    if not B.is(programs_files_uniq) or #programs_files_uniq == 0 then
+      M.sel_open_programs_file_force(1)
+      return
+    end
+    B.ui_sel(programs_files_uniq, 'sel_open_programs_file', function(programs_file)
+      if programs_file then
+        B.system_open_file_silent(programs_file)
+      end
+    end)
+  end
+
+  function M.sel_open_programs_file_force(force)
+    local programs_files_uniq = {}
+    if force then
+      programs_files_uniq = M.get_programs_files_uniq()
+    else
+      local temp = B.read_table_from_file(M.programs_files_txt)
+      if temp then
+        if B.is_sure('%s has %d items, Sure to re run scanning all? It maybe timing a lot', M.programs_files_txt, #temp) then
+          programs_files_uniq = M.get_programs_files_uniq()
+        else
+          programs_files_uniq = temp
+        end
+      end
+    end
+    B.ui_sel(programs_files_uniq, 'sel_open_programs_file_force', function(programs_file)
+      if programs_file then
+        B.system_open_file_silent(programs_file)
+      end
+    end)
+  end
+
+  function M.sel_kill_from_program_files()
+    local programs_files_uniq = B.read_table_from_file(M.programs_files_txt)
+    if not B.is(programs_files_uniq) or #programs_files_uniq == 0 then
+      M.sel_kill_from_program_files_force(1)
+      return
+    end
+    local running_executables = B.get_running_executables()
+    local exes = {}
+    for _, file in ipairs(programs_files_uniq) do
+      for _, temp in ipairs(running_executables) do
+        if B.is_in_str(temp, vim.fn.tolower(file)) and not B.is_in_tbl(temp, exes) then
+          exes[#exes + 1] = temp
+          break
+        end
+      end
+    end
+    B.ui_sel(exes, 'sel_kill_from_program_files', function(exe)
+      if exe then
+        B.system_run('start silent', 'taskkill /f /im %s', exe)
+      end
+    end)
+  end
+
+  function M.sel_kill_from_all_program_files()
+    local running_executables = B.get_running_executables()
+    B.ui_sel(running_executables, 'sel_kill_from_all_program_files', function(exe)
+      if exe then
+        B.system_run('start silent', 'taskkill /f /im %s', exe)
+      end
+    end)
+  end
+
+  function M.sel_kill_from_program_files_force(force)
+    local programs_files_uniq = {}
+    if force then
+      programs_files_uniq = M.get_programs_files_uniq()
+    else
+      local temp = B.read_table_from_file(M.programs_files_txt)
+      if temp then
+        if B.is_sure('%s has %d items, Sure to re run scanning all? It maybe timing a lot', M.programs_files_txt, #temp) then
+          programs_files_uniq = M.get_programs_files_uniq()
+        else
+          programs_files_uniq = temp
+        end
+      end
+    end
+    local running_executables = B.get_running_executables()
+    local exes = {}
+    for _, file in ipairs(programs_files_uniq) do
+      for _, temp in ipairs(running_executables) do
+        if B.is_in_str(temp, vim.fn.tolower(file)) and not B.is_in_tbl(temp, exes) then
+          exes[#exes + 1] = temp
+          break
+        end
+      end
+    end
+    B.ui_sel(exes, 'sel_kill_from_program_files_force', function(exe)
+      if exe then
+        B.system_run('start silent', 'taskkill /f /im %s', exe)
+      end
+    end)
+  end
+
+  function M.sel_open_startup_file()
+    local startup_files = B.get_startup_files()
+    B.ui_sel(startup_files, 'sel_open_startup_file', function(startup_file)
+      if startup_file then
+        B.system_open_file_silent(startup_file)
+      end
+    end)
+  end
+end
+
 M.dp_plugins()
 M.map_lazy_whichkey()
 M.test1()
 M.nvim_qt()
 M.show()
 M.mes()
+M.programs()
 
 require 'which-key'.register {
   ['<leader>ts'] = { name = 'test', },
@@ -513,6 +669,17 @@ require 'which-key'.register {
   ['<leader>tss'] = { name = 'show', },
   ['<leader>tssi'] = { function() M.show_info() end, 'show: info', mode = { 'n', 'v', }, },
   ['<leader>tsss'] = { function() M.show_info_startup() end, 'show: info', mode = { 'n', 'v', }, },
+}
+
+require 'which-key'.register {
+  ['<leader>tsp'] = { name = 'programs', },
+  ['<leader>tsp<leader>'] = { name = 'programs.more', },
+  ['<leader>tspO'] = { function() M.sel_open_programs_file_force() end, 'sel open programs file force', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>tspo'] = { function() M.sel_open_programs_file() end, 'sel open programs file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>tspk'] = { function() M.sel_kill_from_program_files() end, 'sel kill programs file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>tsp<leader>k'] = { function() M.sel_kill_from_all_program_files() end, 'sel kill programs file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>tspK'] = { function() M.sel_kill_from_program_files_force() end, 'sel kill programs file force', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>tsps'] = { function() M.sel_open_startup_file() end, 'sel open startup file', mode = { 'n', 'v', }, silent = true, },
 }
 
 return M
