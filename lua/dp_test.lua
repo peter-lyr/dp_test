@@ -222,7 +222,8 @@ function M.nvim_qt()
       '  time.sleep(0.02)',
       string.format([[print(r'cd "%s\\bin"')]], rtp),
       string.format([[os.system(r'cd "%s\\bin"')]], rtp),
-      string.format('os.system(r"set TEMP=%s&& start /d %s nvim-qt.exe")', DepeiTemp, vim.loop.cwd()),
+      -- string.format('os.system(r"set TEMP=%s&& start /d %s nvim-qt.exe")', DepeiTemp, vim.loop.cwd()),
+      string.format('os.system(r"start /d %s nvim-qt.exe")', vim.loop.cwd()),
       -- 'os.system(r"pause")',
     }, RestartNvimQtPy)
     vim.cmd(string.format([[silent !start cmd /c "%s"]], RestartNvimQtPy))
