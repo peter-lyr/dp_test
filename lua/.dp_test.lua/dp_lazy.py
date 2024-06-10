@@ -20,7 +20,8 @@ for dir in os.listdir(root):
     except:
         pass
     lua_file = os.path.join(lua, dir + ".lua")
-    if not os.path.exists(lua_file):
+    lua_file_2 = os.path.join(lua, dir, "init.lua")
+    if not os.path.exists(lua_file) and not os.path.exists(lua_file_2):
         with open(lua_file, "wb") as f:
             f.write(b"")
 
