@@ -49,6 +49,8 @@ function M.dp_plugins()
         B.system_run('start silent', string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp))
       end
     end
+    table.insert(dp_plugins, 1, 'total ' .. tostring(#dp_plugins) .. ' dp_plugins')
+    B.notify_info(dp_plugins)
   end
 
   function M.branch_status()
