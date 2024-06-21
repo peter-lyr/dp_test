@@ -46,7 +46,7 @@ function M.dp_plugins()
       local result = vim.fn.trim(vim.fn.system(t))
       if #result > 0 then
         local temp = vim.fn.join(cmd_list, ' && ')
-        B.system_run('start silent', string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp))
+        B.system_run('start', string.format('%s & echo. & echo %s & %s', B.system_cd(dp), dp, temp))
       end
     end
     table.insert(dp_plugins, 1, 'total ' .. tostring(#dp_plugins) .. ' dp_plugins')
