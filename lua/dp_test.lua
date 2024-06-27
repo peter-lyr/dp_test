@@ -619,7 +619,7 @@ function M.edit()
   end
 
   function M.edit_b()
-    B.jump_or_edit(DepeiTemp .. '\\b')
+    B.jump_or_split(DepeiTemp .. '\\b')
   end
 end
 
