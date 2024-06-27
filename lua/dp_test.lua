@@ -633,72 +633,72 @@ M.programs()
 M.edit()
 
 require 'which-key'.register {
-  ['<leader>ts'] = { name = 'test', },
+  ['<leader>z'] = { name = 'test', },
 }
 
 require 'which-key'.register {
-  ['<leader>tsd'] = { name = 'test.more', },
-  ['<leader>tsdp'] = { name = 'test.more.dp_plugins', },
-  ['<leader>tsdpb'] = { function() M.branch_status() end, 'test.more.dp_plugins: branch_status', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tsdpa'] = { function() M.add_commit_push_dot() end, 'test.more.dp_plugins: add_commit_push_dot', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tsdpc'] = { function() M.checkout_main_pull() end, 'test.more.dp_plugins: checkout_main_pull', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tsdpr'] = { function() M.dp_lazy_run() end, 'test.more.dp_plugins: dp_lazy_run', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zd'] = { name = 'test.more', },
+  ['<leader>zdp'] = { name = 'test.more.dp_plugins', },
+  ['<leader>zdpb'] = { function() M.branch_status() end, 'test.more.dp_plugins: branch_status', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zdpa'] = { function() M.add_commit_push_dot() end, 'test.more.dp_plugins: add_commit_push_dot', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zdpc'] = { function() M.checkout_main_pull() end, 'test.more.dp_plugins: checkout_main_pull', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zdpr'] = { function() M.dp_lazy_run() end, 'test.more.dp_plugins: dp_lazy_run', mode = { 'n', 'v', }, silent = true, },
 }
 
 require 'which-key'.register {
-  ['<leader>tsdm'] = { name = 'test.more.map_lazy_whichkey', },
-  ['<leader>tsdmt'] = { name = 'test.more.map_lazy_whichkey.to', },
-  ['<leader>tsdmtw'] = { function() M.map_from_lazy_to_whichkey() end, 'test.more.map_lazy_whichkey: map_from_lazy_to_whichkey', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tsdmtl'] = { function() M.map_from_whichkey_to_lazy() end, 'test.more.map_lazy_whichkey: map_from_whichkey_to_lazy', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zdm'] = { name = 'test.more.map_lazy_whichkey', },
+  ['<leader>zdmt'] = { name = 'test.more.map_lazy_whichkey.to', },
+  ['<leader>zdmtw'] = { function() M.map_from_lazy_to_whichkey() end, 'test.more.map_lazy_whichkey: map_from_lazy_to_whichkey', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zdmtl'] = { function() M.map_from_whichkey_to_lazy() end, 'test.more.map_lazy_whichkey: map_from_whichkey_to_lazy', mode = { 'n', 'v', }, silent = true, },
 }
 
 require 'which-key'.register {
-  ['<leader>tsa'] = { function() M.source_file() end, 'test: source_file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>za'] = { function() M.source_file() end, 'test: source_file', mode = { 'n', 'v', }, silent = true, },
 }
 
 require 'which-key'.register {
-  ['<leader>tsn'] = { name = 'nvim_qt', },
-  ['<leader>tsn<leader>s'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
-  ['<leader>tsn<leader>c'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
-  ['<leader>tsn<leader>n'] = { function() M.restart_nvim_qt_opennothing() end, 'nvim_qt.restart: opennothing', mode = { 'n', 'v', }, },
-  ['<leader>tsnn'] = { function() M.start_nvim_qt() end, 'nvim_qt.start: opennothing', mode = { 'n', 'v', }, },
-  ['<leader>tsnc'] = { function() M.start_nvim_qt_opencurfile() end, 'nvim_qt.start: opencurfile', mode = { 'n', 'v', }, },
-  ['<leader>tsns'] = { function() M.start_nvim_qt_sessionload() end, 'nvim_qt.start: sessionsload', mode = { 'n', 'v', }, },
-  ['<leader>tsnq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
+  ['<leader>zn'] = { name = 'nvim_qt', },
+  ['<leader>zn<leader>s'] = { function() M.restart_nvim_qt_sessionload() end, 'nvim_qt.restart: sessionsload', mode = { 'n', 'v', }, },
+  ['<leader>zn<leader>c'] = { function() M.restart_nvim_qt_opencurfile() end, 'nvim_qt.restart: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>zn<leader>n'] = { function() M.restart_nvim_qt_opennothing() end, 'nvim_qt.restart: opennothing', mode = { 'n', 'v', }, },
+  ['<leader>znn'] = { function() M.start_nvim_qt() end, 'nvim_qt.start: opennothing', mode = { 'n', 'v', }, },
+  ['<leader>znc'] = { function() M.start_nvim_qt_opencurfile() end, 'nvim_qt.start: opencurfile', mode = { 'n', 'v', }, },
+  ['<leader>zns'] = { function() M.start_nvim_qt_sessionload() end, 'nvim_qt.start: sessionsload', mode = { 'n', 'v', }, },
+  ['<leader>znq'] = { function() M.quit_nvim_qt() end, 'nvim_qt.just: quit', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
-  ['<leader>tsm'] = { name = 'mes', },
-  ['<leader>tsmm'] = { '<cmd>mes<cr>', 'mes', mode = { 'n', 'v', }, },
-  ['<leader>tsmn'] = { '<cmd>Notifications<cr>', 'Notifications', mode = { 'n', 'v', }, },
-  ['<leader>tsmc'] = { '<cmd>mes clear<cr>', 'mes: clear', mode = { 'n', 'v', }, },
-  ['<leader>tsms'] = { name = 'mes.split', },
-  ['<leader>tsmsm'] = { function() M.mes_output_to_file() end, 'mes.split: mes_output_to_file', mode = { 'n', 'v', }, },
-  ['<leader>tsmsn'] = { function() M.notifications_output_to_file() end, 'mes.split: notifications_output_to_file', mode = { 'n', 'v', }, },
-  ['<leader>tsmsa'] = { function() M.mes_notifications_output_to_file() end, 'mes.split: mes_notifications_output_to_file', mode = { 'n', 'v', }, },
+  ['<leader>zm'] = { name = 'mes', },
+  ['<leader>zmm'] = { '<cmd>mes<cr>', 'mes', mode = { 'n', 'v', }, },
+  ['<leader>zmn'] = { '<cmd>Notifications<cr>', 'Notifications', mode = { 'n', 'v', }, },
+  ['<leader>zmc'] = { '<cmd>mes clear<cr>', 'mes: clear', mode = { 'n', 'v', }, },
+  ['<leader>zms'] = { name = 'mes.split', },
+  ['<leader>zmsm'] = { function() M.mes_output_to_file() end, 'mes.split: mes_output_to_file', mode = { 'n', 'v', }, },
+  ['<leader>zmsn'] = { function() M.notifications_output_to_file() end, 'mes.split: notifications_output_to_file', mode = { 'n', 'v', }, },
+  ['<leader>zmsa'] = { function() M.mes_notifications_output_to_file() end, 'mes.split: mes_notifications_output_to_file', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
-  ['<leader>tss'] = { name = 'show', },
-  ['<leader>tssi'] = { function() M.show_info() end, 'show: info', mode = { 'n', 'v', }, },
-  ['<leader>tsss'] = { function() M.show_info_startup() end, 'show: info', mode = { 'n', 'v', }, },
+  ['<leader>zs'] = { name = 'show', },
+  ['<leader>zsi'] = { function() M.show_info() end, 'show: info', mode = { 'n', 'v', }, },
+  ['<leader>zss'] = { function() M.show_info_startup() end, 'show: info', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
-  ['<leader>tsp'] = { name = 'programs', },
-  ['<leader>tsp<leader>'] = { name = 'programs.more', },
-  ['<leader>tspO'] = { function() M.sel_open_programs_file_force() end, 'sel open programs file force', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tspo'] = { function() M.sel_open_programs_file() end, 'sel open programs file', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tspk'] = { function() M.sel_kill_from_program_files() end, 'sel kill programs file', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tsp<leader>k'] = { function() M.sel_kill_from_all_program_files() end, 'sel kill programs file', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tspK'] = { function() M.sel_kill_from_program_files_force() end, 'sel kill programs file force', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tsps'] = { function() M.sel_open_startup_file() end, 'sel open startup file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zp'] = { name = 'programs', },
+  ['<leader>zp<leader>'] = { name = 'programs.more', },
+  ['<leader>zpO'] = { function() M.sel_open_programs_file_force() end, 'sel open programs file force', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zpo'] = { function() M.sel_open_programs_file() end, 'sel open programs file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zpk'] = { function() M.sel_kill_from_program_files() end, 'sel kill programs file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zp<leader>k'] = { function() M.sel_kill_from_all_program_files() end, 'sel kill programs file', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zpK'] = { function() M.sel_kill_from_program_files_force() end, 'sel kill programs file force', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zps'] = { function() M.sel_open_startup_file() end, 'sel open startup file', mode = { 'n', 'v', }, silent = true, },
 }
 
 require 'which-key'.register {
-  ['<leader>tse'] = { name = 'edit', },
-  ['<leader>tsea'] = { function() M.edit_a() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>tseb'] = { function() M.edit_b() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>ze'] = { name = 'edit', },
+  ['<leader>zea'] = { function() M.edit_a() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zeb'] = { function() M.edit_b() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
 }
 
 return M
