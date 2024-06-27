@@ -613,6 +613,16 @@ EOF
   end
 end
 
+function M.edit()
+  function M.edit_a()
+    B.jump_or_edit(DepeiTemp .. '\\a')
+  end
+
+  function M.edit_b()
+    B.jump_or_edit(DepeiTemp .. '\\b')
+  end
+end
+
 M.dp_plugins()
 M.map_lazy_whichkey()
 M.test1()
@@ -620,6 +630,7 @@ M.nvim_qt()
 M.show()
 M.mes()
 M.programs()
+M.edit()
 
 require 'which-key'.register {
   ['<leader>ts'] = { name = 'test', },
@@ -682,6 +693,12 @@ require 'which-key'.register {
   ['<leader>tsp<leader>k'] = { function() M.sel_kill_from_all_program_files() end, 'sel kill programs file', mode = { 'n', 'v', }, silent = true, },
   ['<leader>tspK'] = { function() M.sel_kill_from_program_files_force() end, 'sel kill programs file force', mode = { 'n', 'v', }, silent = true, },
   ['<leader>tsps'] = { function() M.sel_open_startup_file() end, 'sel open startup file', mode = { 'n', 'v', }, silent = true, },
+}
+
+require 'which-key'.register {
+  ['<leader>tse'] = { name = 'edit', },
+  ['<leader>tsea'] = { function() M.edit_a() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>tseb'] = { function() M.edit_b() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
 }
 
 return M
