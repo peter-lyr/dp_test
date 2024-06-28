@@ -621,6 +621,12 @@ function M.edit()
   function M.edit_b()
     B.jump_or_split(DepeiTemp .. '\\b')
   end
+
+  function M.edit_sel()
+    B.ui_sel({ 'norg', 'py', }, 'Open as', function(ft)
+      B.jump_or_edit(DepeiTemp .. '\\c.' .. ft)
+    end)
+  end
 end
 
 M.dp_plugins()
@@ -698,7 +704,8 @@ require 'which-key'.register {
 require 'which-key'.register {
   ['<leader>ze'] = { name = 'edit', },
   ['<leader>zea'] = { function() M.edit_a() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
-  ['<leader>zeb'] = { function() M.edit_b() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zeb'] = { function() M.edit_b() end, 'edit b', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zes'] = { function() M.edit_sel() end, 'edit sel', mode = { 'n', 'v', }, silent = true, },
 }
 
 return M
