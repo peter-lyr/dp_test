@@ -28,6 +28,8 @@ M.dp_lazy_py         = B.get_file(B.get_source_dot_dir(M.source), M.dp_lazy_py_n
 
 M.programs_files_txt = DataSub .. 'programs-files.txt'
 
+M.edit_sel_fts       = { 'norg', 'py', 'c', }
+
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -627,7 +629,7 @@ function M.edit()
   end
 
   function M.edit_sel()
-    B.ui_sel({ 'norg', 'py', }, 'Open as', function(ft)
+    B.ui_sel(M.edit_sel_fts, 'Open as', function(ft)
       local file = DepeiTemp .. '\\c.' .. ft
       B.touch(file)
       B.jump_or_edit(file)
