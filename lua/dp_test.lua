@@ -615,16 +615,22 @@ end
 
 function M.edit()
   function M.edit_a()
-    B.jump_or_edit(DepeiTemp .. '\\a')
+    local file = DepeiTemp .. '\\a'
+    B.touch(file)
+    B.jump_or_edit(file)
   end
 
   function M.edit_b()
-    B.jump_or_split(DepeiTemp .. '\\b')
+    local file = DepeiTemp .. '\\b'
+    B.touch(file)
+    B.jump_or_split(file)
   end
 
   function M.edit_sel()
     B.ui_sel({ 'norg', 'py', }, 'Open as', function(ft)
-      B.jump_or_edit(DepeiTemp .. '\\c.' .. ft)
+      local file = DepeiTemp .. '\\c.' .. ft
+      B.touch(file)
+      B.jump_or_edit(file)
     end)
   end
 end
