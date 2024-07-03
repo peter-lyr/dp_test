@@ -630,7 +630,7 @@ function M.edit()
 
   function M.edit_sel()
     B.ui_sel(M.edit_sel_fts, 'Open as', function(ft)
-      local file = DepeiTemp .. '\\c.' .. ft
+      local file = DepeiTemp .. '\\' .. ft .. '\\c.' .. ft
       B.touch(file)
       B.jump_or_edit(file)
     end)
