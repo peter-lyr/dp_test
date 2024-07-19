@@ -30,6 +30,8 @@ M.programs_files_txt = DataSub .. 'programs-files.txt'
 
 M.edit_sel_fts       = { 'norg', 'py', 'c', }
 
+M.temp_info_dir      = DepeiTemp .. '\\info\\'
+
 function M.dp_plugins()
   function M.run_one_do(cmd_list)
     local dp_plugins = B.get_dp_plugins()
@@ -406,10 +408,39 @@ function M.show()
     }
   end
 
-  function M.show_info_startup()
-    if StartTimeList then
-      B.notify_info_append(B.merge_tables({ 'startup', }, StartTimeList), 1000 * 60 * 60 * 24)
+  if nil then
+    function M.show_info_startup()
+      if StartTimeList then
+        B.notify_info_append(B.merge_tables({ 'startup', }, StartTimeList), 1000 * 60 * 60 * 24)
+      end
     end
+  end
+
+  function M.show_info_cmd(cmd, fname)
+    local temp = vim.fn.trim(vim.fn.execute('!' .. cmd))
+    temp = string.gsub(temp, '\r', '')
+    local lines = vim.fn.split(temp, '\n')
+    if #lines == 0 then
+      return
+    end
+    local file = M.temp_info_dir
+    if not fname then
+      fname = 'cmd'
+    end
+    file = file .. string.format('info-%s.txt', fname)
+    B.wingoto_file_or_open(file)
+    lines = vim.tbl_filter(function(line)
+      return #line > 0
+    end, lines)
+    local sep = { '', string.format('========= %s below =========', fname), '', }
+    lines = B.merge_tables(sep, lines)
+    vim.cmd 'norm Gzz'
+    vim.fn.append(vim.fn.line '$', lines)
+    vim.cmd 'norm jVGV'
+  end
+
+  function M.show_info_svn()
+    M.show_info_cmd('svn info', 'svn info')
   end
 end
 
@@ -693,10 +724,14 @@ require 'which-key'.register {
   ['<leader>zmsa'] = { function() M.mes_notifications_output_to_file() end, 'mes.split: mes_notifications_output_to_file', mode = { 'n', 'v', }, },
 }
 
+-- require 'which-key'.register {
+--   ['<leader>zss'] = { function() M.show_info_startup() end, 'show: info', mode = { 'n', 'v', }, },
+-- }
+
 require 'which-key'.register {
   ['<leader>zs'] = { name = 'show', },
   ['<leader>zsi'] = { function() M.show_info() end, 'show: info', mode = { 'n', 'v', }, },
-  ['<leader>zss'] = { function() M.show_info_startup() end, 'show: info', mode = { 'n', 'v', }, },
+  ['<leader>zss'] = { function() M.show_info_svn() end, 'show: svn info', mode = { 'n', 'v', }, },
 }
 
 require 'which-key'.register {
