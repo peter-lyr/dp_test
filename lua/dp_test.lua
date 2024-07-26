@@ -28,7 +28,10 @@ M.dp_lazy_py         = B.get_file(B.get_source_dot_dir(M.source), M.dp_lazy_py_n
 
 M.programs_files_txt = DataSub .. 'programs-files.txt'
 
-M.edit_sel_fts       = { 'norg', 'py', 'c', }
+M.edit_sel_fts       = {
+  'norg', 'py', 'c',
+  'ahk',
+}
 
 M.temp_info_dir      = DepeiTemp .. '\\info\\'
 
