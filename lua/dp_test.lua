@@ -351,10 +351,18 @@ function M.show()
     -- end
     -- local str = '# %2d. [%-' .. width .. 's]: %s'
     local str = '# %2d. [%-s]: %s'
+    local flag = vim.fn.has 'nvim-0.10'
+    if flag == 1 then
+      str = '- %2d. [%-s]: %s'
+    end
     for k, v in ipairs(temp) do
       local k2, v2 = unpack(v)
       v2 = vim.fn.trim(v2())
-      table.insert(items, 1, string.format(str, k + start_index, k2, v2))
+      local str__ = string.format(str, k + start_index, k2, v2)
+      if flag == 1 then
+        str__ = string.gsub(str__, '`', '*')
+      end
+      table.insert(items, 1, str__)
     end
     return items
   end
@@ -390,7 +398,7 @@ function M.show()
     end)
     M.len = 0
     M._show_info_one {
-      { '当前目录', function() return string.format('`%s`', vim.loop.cwd()) end, },
+      { '当前目录', function() return string.format('`%s`', B.rep_slash(vim.loop.cwd())) end, },
       { '日期时间', function() return vim.fn.strftime '%Y-%m-%d %H:%M:%S `%a`' end, },
       { '文件编码', function() return string.format('`%s`', vim.opt.fileencoding:get()) end, },
       { '文件格式', function() return string.format('%s', vim.bo.fileformat) end, },
