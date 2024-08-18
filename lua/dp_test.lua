@@ -670,6 +670,13 @@ function M.edit()
     B.jump_or_split(file)
   end
 
+  function M.edit_file_in_clipboard()
+    local file = vim.fn.getreg('+')
+    if B.file_exists(file) then
+      B.jump_or_split(file)
+    end
+  end
+
   function M.edit_sel()
     B.ui_sel(M.edit_sel_fts, 'Open as', function(ft)
       B.mkdir(DepeiTemp .. '\\' .. ft)
@@ -760,6 +767,7 @@ require 'which-key'.register {
   ['<leader>ze'] = { name = 'edit', },
   ['<leader>zea'] = { function() M.edit_a() end, 'edit a', mode = { 'n', 'v', }, silent = true, },
   ['<leader>zeb'] = { function() M.edit_b() end, 'edit b', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zec'] = { function() M.edit_file_in_clipboard() end, 'edit b', mode = { 'n', 'v', }, silent = true, },
   ['<leader>zes'] = { function() M.edit_sel() end, 'edit sel', mode = { 'n', 'v', }, silent = true, },
 }
 
