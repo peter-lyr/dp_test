@@ -687,6 +687,23 @@ function M.edit()
   end
 end
 
+function M.note()
+  function M.note_yank_to_clipboard()
+    local text = vim.fn.getreg("+")
+    if B.is_in_str('id:', text) then
+      vim.schedule(function()
+        vim.cmd 'new'
+        vim.fn.setline('.', vim.fn.split(text, '\n'))
+        vim.cmd [[%s/\[\[.\+]\[//g]]
+        vim.cmd '%s/]]//g'
+        vim.cmd 'g/^$/d'
+        vim.cmd 'norm vip"+y'
+        vim.cmd 'bw!'
+      end)
+    end
+  end
+end
+
 M.dp_plugins()
 M.map_lazy_whichkey()
 M.test1()
@@ -695,6 +712,7 @@ M.show()
 M.mes()
 M.programs()
 M.edit()
+M.note()
 
 require 'which-key'.register {
   ['<leader>z'] = { name = 'test', },
@@ -769,6 +787,11 @@ require 'which-key'.register {
   ['<leader>zeb'] = { function() M.edit_b() end, 'edit b', mode = { 'n', 'v', }, silent = true, },
   ['<leader>zec'] = { function() M.edit_file_in_clipboard() end, 'edit b', mode = { 'n', 'v', }, silent = true, },
   ['<leader>zes'] = { function() M.edit_sel() end, 'edit sel', mode = { 'n', 'v', }, silent = true, },
+}
+
+require 'which-key'.register {
+  ['<leader>zo'] = { name = 'note', },
+  ['<leader>zo<leader>'] = { function() M.note_yank_to_clipboard() end, 'note note_yank_to_clipboard', mode = { 'n', 'v', }, silent = true, },
 }
 
 return M
