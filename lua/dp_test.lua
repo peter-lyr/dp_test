@@ -89,6 +89,11 @@ function M.dp_plugins()
     }
   end
 
+  function M.checkout_main_pull_and_git_pull_all()
+    M.checkout_main_pull()
+    require 'dp_git.push'.pull_all()
+  end
+
   function M.dp_lazy_run()
     B.system_run_histadd(
       'start',
@@ -724,6 +729,7 @@ require 'which-key'.register {
   ['<leader>zdpb'] = { function() M.branch_status() end, 'test.more.dp_plugins: branch_status', mode = { 'n', 'v', }, silent = true, },
   ['<leader>zdpa'] = { function() M.add_commit_push_dot() end, 'test.more.dp_plugins: add_commit_push_dot', mode = { 'n', 'v', }, silent = true, },
   ['<leader>zdpc'] = { function() M.checkout_main_pull() end, 'test.more.dp_plugins: checkout_main_pull', mode = { 'n', 'v', }, silent = true, },
+  ['<leader>zdpp'] = { function() M.checkout_main_pull_and_git_pull_all() end, 'test.more.dp_plugins: checkout_main_pull_and_git_pull_all', mode = { 'n', 'v', }, silent = true, },
   ['<leader>zdpr'] = { function() M.dp_lazy_run() end, 'test.more.dp_plugins: dp_lazy_run', mode = { 'n', 'v', }, silent = true, },
 }
 
